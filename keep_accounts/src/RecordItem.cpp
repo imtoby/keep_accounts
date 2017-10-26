@@ -9,7 +9,7 @@ public:
     {}
 
     QString dateTime;
-    quint64 currentMSecsSinceEpoch;
+    quint64 millonSecs;
     int year;
     int month;
     int day;
@@ -18,6 +18,7 @@ public:
     QString childType;
     QString note;
     double amount;
+    QString icon;
 };
 
 RecordItem::RecordItem(QObject *parent)
@@ -28,7 +29,7 @@ RecordItem::RecordItem(QObject *parent)
 
 RecordItem::~RecordItem()
 {
-    if (NULL != d) {
+    if (d) {
         delete d;
         d = 0;
     }
@@ -39,9 +40,9 @@ QString RecordItem::dateTime() const
     return d->dateTime;
 }
 
-quint64 RecordItem::currentMSecsSinceEpoch() const
+quint64 RecordItem::millonSecs() const
 {
-    return d->currentMSecsSinceEpoch;
+    return d->millonSecs;
 }
 
 int RecordItem::year() const
@@ -84,6 +85,11 @@ double RecordItem::amount() const
     return d->amount;
 }
 
+QString RecordItem::icon() const
+{
+    return d->icon;
+}
+
 void RecordItem::setDateTime(const QString &dateTime)
 {
     if (d->dateTime != dateTime) {
@@ -92,11 +98,11 @@ void RecordItem::setDateTime(const QString &dateTime)
     }
 }
 
-void RecordItem::setCurrentMSecsSinceEpoch(quint64 currentMSecsSinceEpoch)
+void RecordItem::setMillonSecs(quint64 millonSecs)
 {
-    if (d->currentMSecsSinceEpoch != currentMSecsSinceEpoch) {
-        d->currentMSecsSinceEpoch = currentMSecsSinceEpoch;
-        emit currentMSecsSinceEpochChanged(d->currentMSecsSinceEpoch);
+    if (d->millonSecs != millonSecs) {
+        d->millonSecs = millonSecs;
+        emit millonSecsChanged(d->millonSecs);
     }
 }
 
@@ -161,5 +167,13 @@ void RecordItem::setAmount(double amount)
     if (d->amount != amount) {
         d->amount = amount;
         emit amountChanged(d->amount);
+    }
+}
+
+void RecordItem::setIcon(const QString &icon)
+{
+    if (d->icon != icon) {
+        d->icon = icon;
+        emit iconChanged(d->icon);
     }
 }

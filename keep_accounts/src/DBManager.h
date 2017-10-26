@@ -3,15 +3,26 @@
 
 #include <QObject>
 
+class DBManagerPrivate;
+class QSqlDatabase;
+
 class DBManager : public QObject
 {
     Q_OBJECT
 public:
     explicit DBManager(QObject *parent = nullptr);
+    ~DBManager();
 
 signals:
 
 public slots:
+
+private:
+    QSqlDatabase database() const;
+    void createDatabase() const;
+
+private:
+    DBManagerPrivate* d;
 };
 
 #endif // DBMANAGER_H_5DF607D2_DA87_4954_A19E_8F541D2643E0

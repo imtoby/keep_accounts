@@ -9,7 +9,7 @@ class RecordItem : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString dateTime READ dateTime WRITE setDateTime NOTIFY dateTimeChanged)
-    Q_PROPERTY(quint64 currentMSecsSinceEpoch READ currentMSecsSinceEpoch WRITE setCurrentMSecsSinceEpoch NOTIFY currentMSecsSinceEpochChanged)
+    Q_PROPERTY(quint64 millonSecs READ millonSecs WRITE setMillonSecs NOTIFY millonSecsChanged)
     Q_PROPERTY(int year READ year WRITE setYear NOTIFY yearChanged)
     Q_PROPERTY(int month READ month WRITE setMonth NOTIFY monthChanged)
     Q_PROPERTY(int day READ day WRITE setDay NOTIFY dayChanged)
@@ -18,13 +18,14 @@ class RecordItem : public QObject
     Q_PROPERTY(QString childType READ childType WRITE setChildType NOTIFY childTypeChanged)
     Q_PROPERTY(QString note READ note WRITE setNote NOTIFY noteChanged)
     Q_PROPERTY(double amount READ amount WRITE setAmount NOTIFY amountChanged)
+    Q_PROPERTY(QString icon READ icon WRITE setIcon NOTIFY iconChanged)
 
 public:
     explicit RecordItem(QObject *parent = nullptr);
     ~RecordItem();
 
     QString dateTime() const;
-    quint64 currentMSecsSinceEpoch() const;
+    quint64 millonSecs() const;
     int year() const;
     int month() const;
     int day() const;
@@ -33,10 +34,11 @@ public:
     QString childType() const;
     QString note() const;
     double amount() const;
+    QString icon() const;
 
 signals:
     void dateTimeChanged(const QString& dateTime);
-    void currentMSecsSinceEpochChanged(quint64 currentMSecsSinceEpoch);
+    void millonSecsChanged(quint64 millonSecs);
     void yearChanged(int year);
     void monthChanged(int month);
     void dayChanged(int day);
@@ -45,10 +47,11 @@ signals:
     void childTypeChanged(const QString& childType);
     void noteChanged(const QString& note);
     void amountChanged(double amount);
+    void iconChanged(const QString& icon);
 
 public slots:
     void setDateTime(const QString& dateTime);
-    void setCurrentMSecsSinceEpoch(quint64 currentMSecsSinceEpoch);
+    void setMillonSecs(quint64 millonSecs);
     void setYear(int year);
     void setMonth(int month);
     void setDay(int day);
@@ -57,6 +60,7 @@ public slots:
     void setChildType(const QString& childType);
     void setNote(const QString& note);
     void setAmount(double amount);
+    void setIcon(const QString& icon);
 
 private:
     RecordItemPrivate *d;
