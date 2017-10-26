@@ -3,7 +3,8 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    src/DBManager.cpp
+    src/DBManager.cpp \
+    src/RecordItem.cpp
 
 RESOURCES += qml.qrc
 
@@ -30,4 +31,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/DBManager.h
+    src/DBManager.h \
+    src/RecordItem.h \
+    src/ConfigInfo.h
