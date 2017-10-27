@@ -1,5 +1,6 @@
 #include "RecordItem.h"
 #include "ConfigInfo.h"
+#include "DBManager.h"
 
 class RecordItemPrivate
 {
@@ -8,17 +9,17 @@ public:
         : type(KA::OUT)
     {}
 
-    QString dateTime;
-    quint64 millonSecs;
-    int year;
-    int month;
-    int day;
+    QString     dateTime;
+    quint64     millonSecs;
+    int         year;
+    int         month;
+    int         day;
     KA::InorOut type;
-    QString parentType;
-    QString childType;
-    QString note;
-    double amount;
-    QString icon;
+    QString     parentType;
+    QString     childType;
+    QString     note;
+    double      amount;
+    QString     icon;
 };
 
 RecordItem::RecordItem(QObject *parent)
@@ -132,7 +133,7 @@ void RecordItem::setDay(int day)
 
 void RecordItem::setType(int type)
 {
-    if (d->type != type) {
+    if (d->type != type && type >= KA::OUT && type <= KA::IN) {
         d->type = (KA::InorOut)type;
         emit typeChanged(d->type);
     }

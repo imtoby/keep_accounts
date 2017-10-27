@@ -7,11 +7,12 @@
 #include <QSqlQuery>
 
 #include "ConfigInfo.h"
+#include "RecordItem.h"
 
 namespace {
 
-QString DatabaseDirPath = "";
-QString DatabaseFileName = "";
+QString DatabaseDirPath     = "";
+QString DatabaseFileName    = "";
 
 }
 
@@ -37,6 +38,73 @@ DBManager::~DBManager()
     if(d){
         delete d;
         d = 0;
+    }
+}
+
+void DBManager::addRecordData(const RecordItem &recordItem)
+{
+    qDebug() << __FUNCTION__;
+
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+        bool check = query.prepare(KA::TABLE_RECORDS_INSERT);
+
+        if(check){
+            query.bindValue(0, recordItem.millonSecs());
+            query.bindValue(1, recordItem.dateTime());
+            query.bindValue(2, recordItem.year());
+            query.bindValue(3, recordItem.month());
+            query.bindValue(4, recordItem.day());
+            query.bindValue(5, recordItem.type());
+            query.bindValue(6, recordItem.parentType());
+            query.bindValue(7, recordItem.childType());
+            query.bindValue(8, recordItem.amount());
+            query.bindValue(9, recordItem.note());
+            query.bindValue(10, recordItem.icon());
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+        }
+        query.clear();
+        db.close();
+    }
+}
+
+void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
+                                 const QString &value)
+{
+    qDebug() << __FUNCTION__;
+    if (KA::RECORD_ITEM_CONTENT.contains(key)) {
+
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+
+            const QString table_records_update("update "
+                                               + KA::DATABASE_TABLE_NAME_RECORDS
+                                               + " set " + key + "=? where "
+                                               + KA::MILLON_SECS + "=?");
+
+            bool check = query.prepare(table_records_update);
+
+            if(check){
+                query.bindValue(0, value);
+                query.bindValue(1, millonSecs);
+                query.exec();
+            }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+            query.clear();
+            db.close();
+        }
+
+    } else {
+        qDebug() << __FUNCTION__ << " Error: key is not exsit.";
     }
 }
 

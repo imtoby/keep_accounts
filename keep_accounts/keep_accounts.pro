@@ -4,7 +4,8 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     src/DBManager.cpp \
-    src/RecordItem.cpp
+    src/RecordItem.cpp \
+    src/TypeItem.cpp
 
 RESOURCES += qml.qrc
 
@@ -33,4 +34,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/DBManager.h \
     src/RecordItem.h \
-    src/ConfigInfo.h
+    src/ConfigInfo.h \
+    src/TypeItem.h \
+    src/CSingleton.h

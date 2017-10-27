@@ -1,3 +1,10 @@
+/***************************************************************************
+    Copyright (C) 2017 by ZhaoDongshuang
+    Author: ZhaoDongshuang
+    Email: imtoby@126.com
+    Date: 2017/10/26
+    File: RecordItem.h
+ ***************************************************************************/
 #ifndef RECORDITEM_H_3E7BB3B8_B3E8_51AA_A1FF_BB92B02DA72E
 #define RECORDITEM_H_3E7BB3B8_B3E8_51AA_A1FF_BB92B02DA72E
 
