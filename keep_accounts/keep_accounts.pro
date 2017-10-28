@@ -5,7 +5,8 @@ CONFIG += c++11
 SOURCES += main.cpp \
     src/DBManager.cpp \
     src/RecordItem.cpp \
-    src/TypeItem.cpp
+    src/TypeItem.cpp \
+    src/ZUuid.cpp
 
 RESOURCES += qml.qrc
 
@@ -36,4 +37,5 @@ HEADERS += \
     src/RecordItem.h \
     src/ConfigInfo.h \
     src/TypeItem.h \
-    src/CSingleton.h
+    src/CSingleton.h \
+    src/ZUuid.h

@@ -8,6 +8,7 @@
 
 #include "ConfigInfo.h"
 #include "RecordItem.h"
+#include "TypeItem.h"
 
 namespace {
 
@@ -68,6 +69,7 @@ void DBManager::addRecordData(const RecordItem &recordItem)
         if(query.lastError().isValid()){
             qDebug() << __FUNCTION__ << " Error: " << query.lastError();
         }
+
         query.clear();
         db.close();
     }
@@ -99,6 +101,73 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
             if(query.lastError().isValid()){
                 qDebug() << __FUNCTION__ << query.lastError();
             }
+
+            query.clear();
+            db.close();
+        }
+
+    } else {
+        qDebug() << __FUNCTION__ << " Error: key is not exsit.";
+    }
+}
+
+void DBManager::addTypeData(const TypeItem &typeItem)
+{
+    qDebug() << __FUNCTION__;
+
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+        bool check = query.prepare(KA::TABLE_TYPE_INSERT);
+
+        if(check){
+            query.bindValue(0, typeItem.typeId());
+            query.bindValue(1, typeItem.type());
+            query.bindValue(2, typeItem.typeName());
+            query.bindValue(3, typeItem.index());
+            query.bindValue(4, typeItem.millonSecs());
+            query.bindValue(5, typeItem.icon());
+            query.bindValue(6, typeItem.parentId());
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+        }
+
+        query.clear();
+        db.close();
+    }
+}
+
+void DBManager::updateTypeData(const QString &typeId, const QString &key,
+                               const QString &value)
+{
+    qDebug() << __FUNCTION__;
+
+    if (KA::TYPE_ITEM_CONTENT.contains(key)) {
+
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+
+            const QString table_type_update("update "
+                                            + KA::DATABASE_TABLE_NAME_TYPE
+                                            + " set " + key + "=? where "
+                                            + KA::ID + "=?");
+
+            bool check = query.prepare(table_type_update);
+
+            if(check){
+                query.bindValue(0, value);
+                query.bindValue(1, typeId);
+                query.exec();
+            }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+
             query.clear();
             db.close();
         }
@@ -137,6 +206,7 @@ void DBManager::createDatabase() const
         QSqlDatabase qdb = QSqlDatabase::addDatabase("QSQLITE",
                                                      KA::DATABASE_BASE_NAME);
         qdb.setDatabaseName(DatabaseFileName);
+
         if (qdb.open()) {
             qdb.exec(KA::TABLE_RECORDS);
             qdb.exec(KA::TABLE_TYPE);

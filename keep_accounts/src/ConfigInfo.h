@@ -84,7 +84,7 @@ const QString TABLE_RECORDS("CREATE TABLE " + DATABASE_TABLE_NAME_RECORDS + "("
                             + ICON          + " TEXT)");
 
 const QString TABLE_RECORDS_INSERT("insert into "
-                                   + DATABASE_TABLE_NAME_TYPE + " ("
+                                   + DATABASE_TABLE_NAME_RECORDS + " ("
                                    + MILLON_SECS    + ","
                                    + DATE_TIME      + ","
                                    + YEAR           + ","
@@ -106,6 +106,16 @@ const QString TABLE_TYPE("CREATE TABLE " + DATABASE_TABLE_NAME_TYPE + "("
                          + MILLON_SECS  + " TEXT NOT NULL,"
                          + ICON         + " TEXT,"
                          + PARENT_ID    + " TEXT)");
+
+const QString TABLE_TYPE_INSERT("insert into " + DATABASE_TABLE_NAME_TYPE + " ("
+                                + ID            + ","
+                                + TYPE          + ","
+                                + TYPE_NAME     + ","
+                                + INDEX         + ","
+                                + MILLON_SECS   + ","
+                                + ICON          + ","
+                                + PARENT_ID     + ") "
+                                + "values(?,?,?,?,?,?,?)");
 
 }
 

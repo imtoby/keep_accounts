@@ -14,6 +14,7 @@
 class DBManagerPrivate;
 class QSqlDatabase;
 class RecordItem;
+class TypeItem;
 
 class DBManager : public QObject
 {
@@ -28,6 +29,10 @@ public slots:
     void addRecordData(const RecordItem &recordItem);
     void updateRecordData(const QString &millonSecs, const QString &key,
                           const QString &value);
+
+    void addTypeData(const TypeItem &typeItem);
+    void updateTypeData(const QString &typeId, const QString &key,
+                        const QString &value);
 
 private:
     QSqlDatabase database() const;
