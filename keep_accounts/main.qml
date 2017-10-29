@@ -1,8 +1,9 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick 2.6
+import QtQuick.Window 2.2
 import "qml"
+import "qml/Tools"
 
-ApplicationWindow {
+Window {
     id: rootWindow
     visible: true
     width: 480
@@ -11,9 +12,5 @@ ApplicationWindow {
 
     MainPage {
         anchors.fill: parent
-    }
-
-    Utils {
-        id: utils
     }
 }

@@ -1,4 +1,6 @@
-import QtQuick 2.0
+import QtQuick 2.3
+import "Config"
+import "Tools"
 
 Item {
     id: histogram
@@ -61,11 +63,11 @@ Item {
         readonly property real dayInfoHeight: 30
 
         function positionIndex(mouseX, mouseY) {
-            currentIndex = utils.bound(0, mouseX / itemWidth, count - 1)
+            currentIndex = Config.bound(0, mouseX / itemWidth, count - 1)
         }
 
         function currentItemX() {
-            var p = repeaterObj.itemAt(utils.bound(3, currentIndex, count - 4)).mapToItem(histogram, 0, 0)
+            var p = repeaterObj.itemAt(Config.bound(3, currentIndex, count - 4)).mapToItem(histogram, 0, 0)
             return p.x - dayInfoObj.width/2 + itemWidth/2
         }
 

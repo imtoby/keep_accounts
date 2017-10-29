@@ -3,6 +3,19 @@
         <file>main.qml</file>
         <file>qml/MainPage.qml</file>
         <file>qml/Histogram.qml</file>
-        <file>qml/Utils.qml</file>
+        <file>qml/Config/Config.qml</file>
+        <file>qml/Config/qmldir</file>
+        <file>qml/Tools/ScrollDecorator.qml</file>
+        <file>qml/Tools/TypeSwitch.qml</file>
+        <file>qml/Tools/KCalendar.qml</file>
+        <file>qml/Tools/KComboBox.qml</file>
+        <file>qml/Tools/KMonthComboBox.qml</file>
+        <file>qml/Tools/KYearComboBox.qml</file>
+        <file>qml/ClassifyListView.qml</file>
+        <file>qml/EditDialog.qml</file>
+        <file>qml/HeaderView.qml</file>
+        <file>qml/MonthView.qml</file>
+        <file>qml/Tools/KButton.qml</file>
+        <file>qml/EditType.qml</file>
     </qresource>
 </RCC>
