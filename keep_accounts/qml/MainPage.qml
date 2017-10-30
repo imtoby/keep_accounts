@@ -20,13 +20,13 @@ Item {
         verticalTileMode: BorderImage.Repeat
     }
 
-//    EditType{
-//        width: parent.width*4/5
-//        height: parent.height/2
-//        anchors.centerIn: parent
-//    }
-
-    MonthView{
-        anchors.fill: parent
+    EditType{
+        width: parent.width*4/5
+        height: parent.height/2
+        anchors.centerIn: parent
     }
+
+//    MonthView{
+//        anchors.fill: parent
+//    }
 }

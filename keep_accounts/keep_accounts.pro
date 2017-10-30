@@ -6,7 +6,9 @@ SOURCES += main.cpp \
     src/DBManager.cpp \
     src/RecordItem.cpp \
     src/TypeItem.cpp \
-    src/ZUuid.cpp
+    src/ZUuid.cpp \
+    src/TypeManager.cpp \
+    src/TypeModel.cpp
 
 RESOURCES += qml.qrc \
     res.qrc
@@ -39,4 +41,6 @@ HEADERS += \
     src/ConfigInfo.h \
     src/TypeItem.h \
     src/CSingleton.h \
-    src/ZUuid.h
+    src/ZUuid.h \
+    src/TypeManager.h \
+    src/TypeModel.h
