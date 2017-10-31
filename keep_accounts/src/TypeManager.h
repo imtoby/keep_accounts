@@ -10,10 +10,24 @@
 
 #include <QObject>
 
+class TypeManagerPrivate;
+class TypeModel;
+
 class TypeManager
 {
+    Q_OBJECT
 public:
-    TypeManager();
+    TypeManager(QObject *parent = nullptr);
+    ~TypeManager();
+
+    void initData();
+
+private:
+    void initIncomeTypeList();
+    void initExpensesTypeList();
+
+private:
+    TypeManagerPrivate *d;
 };
 
 #endif // TYPEMANAGER_H_65C4F18A_DC47_515A_A0ED_3A4D1547F1E8

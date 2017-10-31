@@ -9,7 +9,9 @@
 #define DBMANAGER_H_5DF607D2_DA87_4954_A19E_8F541D2643E0
 
 #include <QObject>
+#include <QList>
 #include "CSingleton.h"
+#include "ConfigInfo.h"
 
 class DBManagerPrivate;
 class QSqlDatabase;
@@ -33,6 +35,11 @@ public slots:
     void addTypeData(const TypeItem &typeItem);
     void updateTypeData(const QString &typeId, const QString &key,
                         const QString &value);
+
+    QList<TypeItem> getType(KA::InorOut inorOut,
+                            const QString& parentId = QString());
+
+    int typeCount(const QString& parentId = QString()) const;
 
 private:
     QSqlDatabase database() const;
