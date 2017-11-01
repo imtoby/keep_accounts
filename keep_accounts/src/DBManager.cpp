@@ -8,7 +8,6 @@
 
 #include "ConfigInfo.h"
 #include "RecordItem.h"
-#include "TypeItem.h"
 
 namespace {
 
@@ -199,7 +198,7 @@ QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
                                "='%2' order by " + KA::MILLON_SECS +
                                " ASC")
                        .arg(QString::number(inorOut))
-                       .arg(parentIndex));
+                       .arg(parentId));
 
             QList<TypeItem> list;
             while (query.next()) {

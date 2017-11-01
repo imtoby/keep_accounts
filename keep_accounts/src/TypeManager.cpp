@@ -6,10 +6,19 @@
     File: TypeManager.h
  ***************************************************************************/
 #include "TypeManager.h"
-#include <QList>
+#include <QThread>
+#include <QMap>
 
-#include "TypeItem.h"
 #include "DBManager.h"
+
+namespace {
+
+QList<TypeItem> IncomeTypeTopList;
+QMap<QString, QList<TypeItem>> IncomeTypeChildrenMap;
+QList<TypeItem> ExpensesTypeTopList;
+QMap<QString, QList<TypeItem>> ExpensesTypeChildrenMap;
+
+}
 
 class TypeManagerPrivate
 {
@@ -18,20 +27,28 @@ public:
     {
     }
 
-    QList<TypeItem> incomeTypeTopList;
-    QMap<QString, QList<TypeItem>> incomeTypeChildrenMap;
-    QList<TypeItem> expensesTypeTopList;
-    QMap<QString, QList<TypeItem>> expensesTypeChildrenMap;
+    QThread workerThread;
 };
 
 TypeManager::TypeManager(QObject *parent)
     : QObject(parent)
     , d(new TypeManagerPrivate())
 {
+    InitTypeInfoWorker *worker = new InitTypeInfoWorker;
+    worker->moveToThread(&d->workerThread);
+    connect(&d->workerThread, &QThread::finished,
+            worker, &QObject::deleteLater);
+    connect(this, &TypeManager::startInitTypeInfo,
+            worker, &InitTypeInfoWorker::doWork);
+    connect(worker, &InitTypeInfoWorker::resultReady,
+            this, &TypeManager::initTypeInfoFinished);
+    d->workerThread.start();
 }
 
 TypeManager::~TypeManager()
 {
+    d->workerThread.quit();
+    d->workerThread.wait();
     if (d) {
         delete d;
         d = 0;
@@ -40,17 +57,29 @@ TypeManager::~TypeManager()
 
 void TypeManager::initData()
 {
-    initIncomeTypeList();
-    initExpensesTypeList();
+    emit startInitTypeInfo();
 }
 
-void TypeManager::initIncomeTypeList()
+void InitTypeInfoWorker::doWork()
 {
-    d->incomeTypeTopList = KA_DB->getType(KA::IN);
-    // todo init children
-}
+    IncomeTypeTopList = KA_DB->getType(KA::IN);
 
-void TypeManager::initExpensesTypeList()
-{
-    d->expensesTypeTopList = KA_DB->getType(KA::OUT);
+    QString topTypeId;
+    QList<TypeItem> childrenList;
+
+    for (const TypeItem& typeItem : IncomeTypeTopList) {
+        topTypeId = typeItem.typeId();
+        childrenList = KA_DB->getType(KA::IN, topTypeId);
+        IncomeTypeChildrenMap.insert(topTypeId, childrenList);
+    }
+
+    ExpensesTypeTopList = KA_DB->getType(KA::OUT);
+
+    for (const TypeItem& typeItem : ExpensesTypeTopList) {
+        topTypeId = typeItem.typeId();
+        childrenList = KA_DB->getType(KA::OUT, topTypeId);
+        IncomeTypeChildrenMap.insert(topTypeId, childrenList);
+    }
+
+    emit resultReady();
 }

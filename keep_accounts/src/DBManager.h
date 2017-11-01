@@ -10,13 +10,14 @@
 
 #include <QObject>
 #include <QList>
+
 #include "CSingleton.h"
 #include "ConfigInfo.h"
+#include "TypeItem.h"
 
 class DBManagerPrivate;
 class QSqlDatabase;
 class RecordItem;
-class TypeItem;
 
 class DBManager : public QObject
 {

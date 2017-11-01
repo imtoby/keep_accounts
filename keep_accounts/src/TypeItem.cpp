@@ -25,6 +25,53 @@ TypeItem::TypeItem(QObject *parent)
 
 }
 
+TypeItem::TypeItem(const TypeItem &other)
+{
+    d->typeId       = other.d->typeId;
+    d->type         = other.d->type;
+    d->typeName     = other.d->typeName;
+    d->index        = other.d->index;
+    d->millonSecs   = other.d->millonSecs;
+    d->icon         = other.d->icon;
+    d->parentId     = other.d->parentId;
+}
+
+TypeItem::TypeItem(TypeItem &other)
+{
+    d->typeId       = other.d->typeId;
+    d->type         = other.d->type;
+    d->typeName     = other.d->typeName;
+    d->index        = other.d->index;
+    d->millonSecs   = other.d->millonSecs;
+    d->icon         = other.d->icon;
+    d->parentId     = other.d->parentId;
+}
+
+TypeItem &TypeItem::operator = (const TypeItem &other)
+{
+    if (this != &other) {
+        d->typeId       = other.d->typeId;
+        d->type         = other.d->type;
+        d->typeName     = other.d->typeName;
+        d->index        = other.d->index;
+        d->millonSecs   = other.d->millonSecs;
+        d->icon         = other.d->icon;
+        d->parentId     = other.d->parentId;
+    }
+    return *this;
+}
+
+bool TypeItem::operator==(TypeItem &other)
+{
+    return  d->typeId       == other.d->typeId &&
+            d->type         == other.d->type &&
+            d->typeName     == other.d->typeName &&
+            d->index        == other.d->index &&
+            d->millonSecs   == other.d->millonSecs &&
+            d->icon         == other.d->icon &&
+            d->parentId     == other.d->parentId;
+}
+
 TypeItem::~TypeItem()
 {
     if (d) {

@@ -25,6 +25,10 @@ class TypeItem : public QObject
 
 public:
     explicit TypeItem(QObject *parent = nullptr);
+    TypeItem(const TypeItem& other);
+    TypeItem(TypeItem& other);
+    TypeItem& operator = (const TypeItem &other);
+    bool operator==(TypeItem &other);
     ~TypeItem();
 
     QString typeId() const;

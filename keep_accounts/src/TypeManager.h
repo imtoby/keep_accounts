@@ -9,22 +9,36 @@
 #define TYPEMANAGER_H_65C4F18A_DC47_515A_A0ED_3A4D1547F1E8
 
 #include <QObject>
+#include <QList>
+
+#include "TypeItem.h"
 
 class TypeManagerPrivate;
 class TypeModel;
 
-class TypeManager
+class InitTypeInfoWorker : public QObject
+{
+    Q_OBJECT
+public slots:
+    void doWork();
+
+signals:
+    void resultReady();
+};
+
+class TypeManager : public QObject
 {
     Q_OBJECT
 public:
     TypeManager(QObject *parent = nullptr);
     ~TypeManager();
 
+public slots:
     void initData();
 
-private:
-    void initIncomeTypeList();
-    void initExpensesTypeList();
+signals:
+    void startInitTypeInfo();
+    void initTypeInfoFinished();
 
 private:
     TypeManagerPrivate *d;
