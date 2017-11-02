@@ -20,10 +20,12 @@ class InitTypeInfoWorker : public QObject
 {
     Q_OBJECT
 public slots:
-    void doWork();
+    void doInitWork();
+    void doAddWork(const TypeItem &typeItem);
 
 signals:
-    void resultReady();
+    void initReady();
+    void addFinished();
 };
 
 class TypeManager : public QObject
@@ -33,12 +35,20 @@ public:
     TypeManager(QObject *parent = nullptr);
     ~TypeManager();
 
+    Q_INVOKABLE QString createId() const;
+    Q_INVOKABLE quint64 currentMillonSecs() const;
+    Q_INVOKABLE int getCount(int type, const QString& parentId = QString());
+
+    Q_INVOKABLE QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());
+
 public slots:
     void initData();
 
 signals:
     void startInitTypeInfo();
+    void startAddType(const TypeItem &typeItem);
     void initTypeInfoFinished();
+    void addTypeFinished();
 
 private:
     TypeManagerPrivate *d;

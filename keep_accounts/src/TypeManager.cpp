@@ -8,8 +8,10 @@
 #include "TypeManager.h"
 #include <QThread>
 #include <QMap>
+#include <QDateTime>
 
 #include "DBManager.h"
+#include "ZUuid.h"
 
 namespace {
 
@@ -39,9 +41,13 @@ TypeManager::TypeManager(QObject *parent)
     connect(&d->workerThread, &QThread::finished,
             worker, &QObject::deleteLater);
     connect(this, &TypeManager::startInitTypeInfo,
-            worker, &InitTypeInfoWorker::doWork);
-    connect(worker, &InitTypeInfoWorker::resultReady,
+            worker, &InitTypeInfoWorker::doInitWork);
+    connect(this, &TypeManager::startAddType,
+            worker, &InitTypeInfoWorker::doAddWork);
+    connect(worker, &InitTypeInfoWorker::initReady,
             this, &TypeManager::initTypeInfoFinished);
+    connect(worker, &InitTypeInfoWorker::addFinished,
+            this, &TypeManager::addTypeFinished);
     d->workerThread.start();
 }
 
@@ -55,13 +61,51 @@ TypeManager::~TypeManager()
     }
 }
 
+QString TypeManager::createId() const
+{
+    return KA_UUID->createUuidV5();
+}
+
+quint64 TypeManager::currentMillonSecs() const
+{
+    return QDateTime::currentMSecsSinceEpoch();
+}
+
+int TypeManager::getCount(int type, const QString &parentId)
+{
+    if (KA::IN == type) {
+        return parentId.isEmpty()
+                ? IncomeTypeTopList.size()
+                : IncomeTypeChildrenMap.value(parentId).size();
+    } else {
+        return parentId.isEmpty()
+                ? ExpensesTypeTopList.size()
+                : ExpensesTypeChildrenMap.value(parentId).size();
+    }
+}
+
+QList<TypeItem> TypeManager::getTypeItems(int type, const QString &parentId)
+{
+    if (KA::IN == type) {
+        return parentId.isEmpty()
+                ? IncomeTypeTopList
+                : IncomeTypeChildrenMap.value(parentId);
+    } else {
+        return parentId.isEmpty()
+                ? ExpensesTypeTopList
+                : ExpensesTypeChildrenMap.value(parentId);
+    }
+}
+
 void TypeManager::initData()
 {
     emit startInitTypeInfo();
 }
 
-void InitTypeInfoWorker::doWork()
+void InitTypeInfoWorker::doInitWork()
 {
+    IncomeTypeTopList.clear();
+    IncomeTypeChildrenMap.clear();
     IncomeTypeTopList = KA_DB->getType(KA::IN);
 
     QString topTypeId;
@@ -73,13 +117,20 @@ void InitTypeInfoWorker::doWork()
         IncomeTypeChildrenMap.insert(topTypeId, childrenList);
     }
 
+    ExpensesTypeTopList.clear();
+    ExpensesTypeChildrenMap.clear();
     ExpensesTypeTopList = KA_DB->getType(KA::OUT);
 
     for (const TypeItem& typeItem : ExpensesTypeTopList) {
         topTypeId = typeItem.typeId();
         childrenList = KA_DB->getType(KA::OUT, topTypeId);
-        IncomeTypeChildrenMap.insert(topTypeId, childrenList);
+        ExpensesTypeChildrenMap.insert(topTypeId, childrenList);
     }
 
-    emit resultReady();
+    emit initReady();
+}
+
+void InitTypeInfoWorker::doAddWork(const TypeItem &typeItem)
+{
+    KA_DB->addTypeData(typeItem);
 }
