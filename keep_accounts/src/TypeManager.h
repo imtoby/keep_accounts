@@ -9,7 +9,7 @@
 #define TYPEMANAGER_H_65C4F18A_DC47_515A_A0ED_3A4D1547F1E8
 
 #include <QObject>
-#include <QList>
+#include <QStringList>
 
 #include "TypeItem.h"
 
@@ -39,7 +39,10 @@ public:
     Q_INVOKABLE quint64 currentMillonSecs() const;
     Q_INVOKABLE int getCount(int type, const QString& parentId = QString());
 
-    Q_INVOKABLE QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());
+    Q_INVOKABLE QStringList getTypeInfo(int type, const QString& parentId = QString());
+    Q_INVOKABLE void addType(const QString& typeName, int type,
+                             const QString& parentId = QString(),
+                             const QString& icon = QString());
 
 public slots:
     void initData();
@@ -49,6 +52,9 @@ signals:
     void startAddType(const TypeItem &typeItem);
     void initTypeInfoFinished();
     void addTypeFinished();
+
+private:
+    QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());
 
 private:
     TypeManagerPrivate *d;

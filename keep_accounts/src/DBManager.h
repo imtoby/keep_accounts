@@ -15,7 +15,6 @@
 #include "ConfigInfo.h"
 #include "TypeItem.h"
 
-class DBManagerPrivate;
 class QSqlDatabase;
 class RecordItem;
 
@@ -45,9 +44,6 @@ public slots:
 private:
     QSqlDatabase database() const;
     void createDatabase() const;
-
-private:
-    DBManagerPrivate* d;
 };
 
 #define KA_DB CSingleton<DBManager>::instance()

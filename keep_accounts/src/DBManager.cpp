@@ -16,15 +16,8 @@ QString DatabaseFileName    = "";
 
 }
 
-class DBManagerPrivate
-{
-public:
-    DBManagerPrivate() {}
-};
-
 DBManager::DBManager(QObject *parent)
     : QObject(parent)
-    , d(new DBManagerPrivate)
 {
     DatabaseDirPath = QCoreApplication::applicationDirPath() +
             QDir::separator() + KA::DATABASE_DIR_NAME;
@@ -35,10 +28,6 @@ DBManager::DBManager(QObject *parent)
 
 DBManager::~DBManager()
 {
-    if(d){
-        delete d;
-        d = 0;
-    }
 }
 
 void DBManager::addRecordData(const RecordItem &recordItem)

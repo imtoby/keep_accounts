@@ -30,6 +30,7 @@ public:
     }
 
     QThread workerThread;
+    TypeItem typeItem;
 };
 
 TypeManager::TypeManager(QObject *parent)
@@ -84,6 +85,38 @@ int TypeManager::getCount(int type, const QString &parentId)
     }
 }
 
+QStringList TypeManager::getTypeInfo(int type, const QString &parentId)
+{
+    QStringList list;
+    QList<TypeItem> listItems = getTypeItems(type, parentId);
+    for (const TypeItem& typeItem : listItems) {
+        QString item;
+        item.append(typeItem.typeId());
+        item.append(typeItem.typeName());
+        list.push_back(item);
+    }
+    return list;
+}
+
+void TypeManager::addType(const QString &typeName, int type,
+                          const QString &parentId, const QString &icon)
+{
+    d->typeItem.setTypeName(typeName);
+    d->typeItem.setType(type);
+    d->typeItem.setTypeId(KA_UUID->createUuidV5());
+    d->typeItem.setIcon(icon);
+    d->typeItem.setParentId(parentId);
+    d->typeItem.setMillonSecs(QDateTime::currentMSecsSinceEpoch());
+    d->typeItem.setIndex(QString::number(getCount(type, parentId)));
+
+    emit startAddType(d->typeItem);
+}
+
+void TypeManager::initData()
+{
+    emit startInitTypeInfo();
+}
+
 QList<TypeItem> TypeManager::getTypeItems(int type, const QString &parentId)
 {
     if (KA::IN == type) {
@@ -95,11 +128,6 @@ QList<TypeItem> TypeManager::getTypeItems(int type, const QString &parentId)
                 ? ExpensesTypeTopList
                 : ExpensesTypeChildrenMap.value(parentId);
     }
-}
-
-void TypeManager::initData()
-{
-    emit startInitTypeInfo();
 }
 
 void InitTypeInfoWorker::doInitWork()

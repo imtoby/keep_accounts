@@ -27,24 +27,22 @@ TypeItem::TypeItem(QObject *parent)
 
 TypeItem::TypeItem(const TypeItem &other)
 {
-    d->typeId       = other.d->typeId;
-    d->type         = other.d->type;
-    d->typeName     = other.d->typeName;
-    d->index        = other.d->index;
-    d->millonSecs   = other.d->millonSecs;
-    d->icon         = other.d->icon;
-    d->parentId     = other.d->parentId;
+    if (this != &other) {
+        d       = other.d;
+    }
 }
 
 TypeItem::TypeItem(TypeItem &other)
 {
-    d->typeId       = other.d->typeId;
-    d->type         = other.d->type;
-    d->typeName     = other.d->typeName;
-    d->index        = other.d->index;
-    d->millonSecs   = other.d->millonSecs;
-    d->icon         = other.d->icon;
-    d->parentId     = other.d->parentId;
+    if (this != &other) {
+        d->typeId       = other.d->typeId;
+        d->type         = other.d->type;
+        d->typeName     = other.d->typeName;
+        d->index        = other.d->index;
+        d->millonSecs   = other.d->millonSecs;
+        d->icon         = other.d->icon;
+        d->parentId     = other.d->parentId;
+    }
 }
 
 TypeItem &TypeItem::operator = (const TypeItem &other)

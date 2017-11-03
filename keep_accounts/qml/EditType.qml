@@ -1,4 +1,5 @@
 import QtQuick 2.3
+import com.imtoby.keep_accounts 1.0
 import "Config"
 import "Tools"
 
@@ -6,7 +7,7 @@ Item {
     id: classifyEdit
 
     readonly property bool isExpenses: typeContainer.isExpensesType
-    readonly property int classifyValue: isExpenses ? Config.expensesClassify
+    readonly property int typeValue: isExpenses ? Config.expensesClassify
                                          : Config.incomeClassify
 
     Rectangle{
@@ -74,8 +75,8 @@ Item {
             property string lastTypeUuid: ""
 
             function initTopItems(){
-                clear()
-                var a = dbMgr.classify(classifyValue, "0");
+                clear();
+                var a = typeManager.getTypeInfo(typeValue, "");
 
                 for(var i=0; i<a.length; ++i){
                     var item = a[i];
@@ -94,7 +95,7 @@ Item {
 
             function initChildItems(tUuid){
                 childClassifyListView.clear()
-                var a = dbMgr.classify(classifyValue, tUuid);
+                var a = typeManager.getTypeInfo(typeValue, tUuid);
                 for(var i=0; i<a.length; ++i){
                     var item = a[i];
                     var uuid = item.substring(0, 36)
@@ -114,7 +115,7 @@ Item {
             }
 
             onAccepted: {
-                var uuid = dbMgr.addType(text, classifyValue, "0");
+                var uuid = typeManager.addType(text, typeValue, "");
 
                 addType(text, uuid);
             }
@@ -147,15 +148,15 @@ Item {
             opacity: 0
 
             onAccepted: {
-                var uuid = dbMgr.addType(text, classifyValue,
-                                         topClassifyListView.typeUuid);
+                var uuid = typeManager.addType(text, typeValue,
+                                               topClassifyListView.typeUuid);
 
                 addType(text, uuid);
             }
         }
     }
 
-    onClassifyValueChanged: {
+    onTypeValueChanged: {
         topClassifyListView.initTopItems()
     }
 
