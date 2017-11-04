@@ -18,6 +18,8 @@ enum InorOut {
     IN
 };
 
+const QString TOP_TYPE_ID   = "topTypeId_0";
+
 // for every record item
 const QString MILLON_SECS   = "_MillonSecs";
 const QString DATE_TIME     = "_DateTime";

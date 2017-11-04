@@ -1,5 +1,4 @@
 import QtQuick 2.3
-import com.imtoby.keep_accounts 1.0
 import "Config"
 import "Tools"
 
@@ -7,8 +6,7 @@ Item {
     id: classifyEdit
 
     readonly property bool isExpenses: typeContainer.isExpensesType
-    readonly property int typeValue: isExpenses ? Config.expensesClassify
-                                         : Config.incomeClassify
+    readonly property int typeValue: isExpenses ? Config.in_type : Config.out_type
 
     Rectangle{
         anchors.fill: parent
@@ -75,8 +73,9 @@ Item {
             property string lastTypeUuid: ""
 
             function initTopItems(){
+                console.log("initTopItems")
                 clear();
-                var a = typeManager.getTypeInfo(typeValue, "");
+                var a = typeManager.getTypeInfo(typeValue, Config.topTypeId);
 
                 for(var i=0; i<a.length; ++i){
                     var item = a[i];
@@ -115,9 +114,7 @@ Item {
             }
 
             onAccepted: {
-                var uuid = typeManager.addType(text, typeValue, "");
-
-                addType(text, uuid);
+                typeManager.addType(text, typeValue, Config.topTypeId);
             }
 
             onTypeChanged: {
@@ -126,6 +123,14 @@ Item {
                 }
 
                 lastTypeUuid = typeUuid
+            }
+
+            Connections {
+                target: typeManager
+                ignoreUnknownSignals: true
+                onAddTypeFinished : {
+                    topClassifyListView.addType(text, typeId);
+                }
             }
         }
 
@@ -148,16 +153,30 @@ Item {
             opacity: 0
 
             onAccepted: {
-                var uuid = typeManager.addType(text, typeValue,
-                                               topClassifyListView.typeUuid);
+                typeManager.addType(text, typeValue,
+                                    topClassifyListView.typeUuid);
+            }
 
-                addType(text, uuid);
+            Connections {
+                target: typeManager
+                ignoreUnknownSignals: true
+                onAddTypeFinished : {
+                    childClassifyListView.addType(text, typeId);
+                }
             }
         }
     }
 
+    Connections {
+        target: typeManager
+        ignoreUnknownSignals: true
+        onInitTypeInfoFinished : {
+            topClassifyListView.initTopItems()
+        }
+    }
+
     onTypeValueChanged: {
-        topClassifyListView.initTopItems()
+        typeManager.initData();
     }
 
 }

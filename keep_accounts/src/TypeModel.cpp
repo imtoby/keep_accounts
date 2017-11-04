@@ -43,13 +43,13 @@ QVariant TypeModel::data(const QModelIndex &index, int role) const
     const TypeItem &typeItem = d->typesList[index.row()];
 
     switch (role) {
-    case TypeIdRole:        return typeItem.typeId();
-    case TypeRole:          return typeItem.type();
-    case TypeNameRole:      return typeItem.typeName();
-    case IndexRole:         return typeItem.index();
-    case MillonSecsRole:    return typeItem.millonSecs();
-    case IconRole:          return typeItem.icon();
-    case ParentIdRole:      return typeItem.parentId();
+    case TypeIdRole:        return typeItem.typeId;
+    case TypeRole:          return typeItem.type;
+    case TypeNameRole:      return typeItem.typeName;
+    case IndexRole:         return typeItem.index;
+    case MillonSecsRole:    return typeItem.millonSecs;
+    case IconRole:          return typeItem.icon;
+    case ParentIdRole:      return typeItem.parentId;
     default:
         break;
     }

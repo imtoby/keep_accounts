@@ -13,12 +13,11 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
+    qRegisterMetaType<TypeItem>("TypeItem");
+
     TypeManager* typeManager = new TypeManager(&app);
 
     engine.rootContext()->setContextProperty("typeManager", typeManager);
-
-    qRegisterMetaType<TypeItem>("TypeItem");
-    qmlRegisterType<TypeItem>("com.imtoby.keep_accounts", 1, 0, "TypeItem");
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

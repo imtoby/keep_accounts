@@ -25,6 +25,7 @@ ListView{
             listModel.typeName = tName
         }
         listModel.append({"name":tName,"uuid":tUuid})
+        console.log("addType: ", tName, tUuid)
     }
 
     function clear(){

@@ -46,12 +46,13 @@ public:
 
 public slots:
     void initData();
+    void doAddTypeFinished();
 
 signals:
     void startInitTypeInfo();
     void startAddType(const TypeItem &typeItem);
     void initTypeInfoFinished();
-    void addTypeFinished();
+    void addTypeFinished(const QString& typeId);
 
 private:
     QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());

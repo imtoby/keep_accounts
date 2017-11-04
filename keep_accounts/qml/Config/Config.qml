@@ -32,9 +32,11 @@ QtObject{
 
     readonly property variant locale: Qt.locale()
     readonly property string dateFormat: "yyyy-MM-dd"
+    readonly property string topTypeId: "topTypeId_0"
 
-    readonly property int incomeClassify:      0x02
-    readonly property int expensesClassify:    0x04
+    readonly property int out_type:  0x00
+    readonly property int in_type:   0x01
+
 
     function padZero(num, n) {
         var len = num.toString().length;
