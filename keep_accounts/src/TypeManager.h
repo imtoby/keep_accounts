@@ -14,7 +14,6 @@
 #include "TypeItem.h"
 
 class TypeManagerPrivate;
-class TypeModel;
 
 class InitTypeInfoWorker : public QObject
 {

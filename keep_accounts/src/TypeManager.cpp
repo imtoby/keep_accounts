@@ -205,5 +205,9 @@ void InitTypeInfoWorker::doInitWork()
 void InitTypeInfoWorker::doAddWork(const TypeItem &typeItem)
 {
     bool success = KA_DB->addTypeData(typeItem);
-    emit addFinished();
+    if (success) {
+        emit addFinished();
+    } else {
+        qDebug() << __FUNCTION__ << "addType failed";
+    }
 }

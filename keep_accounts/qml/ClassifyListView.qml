@@ -22,7 +22,12 @@ ListView{
 
     function addType(tName, tUuid) {
         listModel.append({"name":tName,"uuid":tUuid})
-        console.log("addType: ", tName, tUuid)
+        if (listModel.typeName.length === 0) {
+            listModel.typeName = tName // for typeEditInput empty
+        }
+        if (listModel.typeUuid.length === 0) {
+            listModel.typeUuid = tUuid
+        }
     }
 
     function clear(){
@@ -90,6 +95,7 @@ ListView{
             anchors.fill: parent
             anchors.margins: -1
             color: Config.lineColor
+            opacity: typeName.length > 0
         }
 
         TextInput {
@@ -102,9 +108,6 @@ ListView{
             verticalAlignment: TextInput.AlignVCenter
             color: Config.balanceColor
             text: typeName
-            onTextChanged: {
-                console.log("Focus Text: ", text)
-            }
         }
 
         Keys.onReleased: {
