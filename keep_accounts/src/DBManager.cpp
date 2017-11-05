@@ -99,10 +99,11 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
     }
 }
 
-void DBManager::addTypeData(const TypeItem &typeItem)
+bool DBManager::addTypeData(const TypeItem &typeItem)
 {
     qDebug() << __FUNCTION__;
 
+    bool addSuccess = false;
     QSqlDatabase db = database();
     if(db.open()){
         QSqlQuery query(db);
@@ -121,11 +122,17 @@ void DBManager::addTypeData(const TypeItem &typeItem)
 
         if(query.lastError().isValid()){
             qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+        } else {
+            addSuccess = true;
         }
 
         query.clear();
         db.close();
+
+        return addSuccess;
     }
+
+    return addSuccess;
 }
 
 void DBManager::updateTypeData(const QString &typeId, const QString &key,
@@ -211,6 +218,8 @@ QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
             }
             query.clear();
             db.close();
+
+            qDebug() << __FUNCTION__ << "list.size: " << list.size();
 
             return list;
         }

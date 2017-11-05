@@ -21,9 +21,6 @@ ListView{
     }
 
     function addType(tName, tUuid) {
-        if(typeName === ""){
-            listModel.typeName = tName
-        }
         listModel.append({"name":tName,"uuid":tUuid})
         console.log("addType: ", tName, tUuid)
     }
@@ -71,14 +68,8 @@ ListView{
 
         onClicked: {
             currentIndex = index
-
-            if(typeof name != "undefined"){
-                listModel.typeName = name
-            }
-            if(typeof uuid != "undefined"){
-                listModel.typeUuid = uuid
-            }
-
+            listModel.typeName = listModel.get(currentIndex).name
+            listModel.typeUuid = listModel.get(currentIndex).uuid
             typeChanged()
         }
     }
@@ -101,7 +92,7 @@ ListView{
             color: Config.lineColor
         }
 
-        TextInput{
+        TextInput {
             id: typeEditInput
             anchors.fill: parent
             clip: true
@@ -111,6 +102,9 @@ ListView{
             verticalAlignment: TextInput.AlignVCenter
             color: Config.balanceColor
             text: typeName
+            onTextChanged: {
+                console.log("Focus Text: ", text)
+            }
         }
 
         Keys.onReleased: {
@@ -329,5 +323,10 @@ ListView{
 
     highlightFollowsCurrentItem: true
 
+    onCurrentIndexChanged: {
+        console.log("ClassifyListView onCurrentIndexChanged: ", currentIndex);
+        listModel.typeName = listModel.get(currentIndex).name
+        listModel.typeUuid = listModel.get(currentIndex).uuid
+    }
 }
 

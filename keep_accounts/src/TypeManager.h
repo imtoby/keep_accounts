@@ -52,7 +52,8 @@ signals:
     void startInitTypeInfo();
     void startAddType(const TypeItem &typeItem);
     void initTypeInfoFinished();
-    void addTypeFinished(const QString& typeId);
+    void addTopTypeFinished(const QString& typeName, const QString& typeId);
+    void addChildTypeFinished(const QString& typeName, const QString& typeId);
 
 private:
     QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());

@@ -32,7 +32,7 @@ public slots:
     void updateRecordData(const QString &millonSecs, const QString &key,
                           const QString &value);
 
-    void addTypeData(const TypeItem &typeItem);
+    bool addTypeData(const TypeItem &typeItem);
     void updateTypeData(const QString &typeId, const QString &key,
                         const QString &value);
 

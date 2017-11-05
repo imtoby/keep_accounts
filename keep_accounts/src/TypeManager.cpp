@@ -76,13 +76,13 @@ quint64 TypeManager::currentMillonSecs() const
 int TypeManager::getCount(int type, const QString &parentId)
 {
     if (KA::IN == type) {
-        return parentId.isEmpty()
+        return (parentId == KA::TOP_TYPE_ID
                 ? IncomeTypeTopList.size()
-                : IncomeTypeChildrenMap.value(parentId).size();
+                : IncomeTypeChildrenMap.value(parentId).size());
     } else {
-        return parentId.isEmpty()
+        return (parentId == KA::TOP_TYPE_ID
                 ? ExpensesTypeTopList.size()
-                : ExpensesTypeChildrenMap.value(parentId).size();
+                : ExpensesTypeChildrenMap.value(parentId).size());
     }
 }
 
@@ -91,18 +91,21 @@ QStringList TypeManager::getTypeInfo(int type, const QString &parentId)
     qDebug() << __FUNCTION__ << type << parentId;
     QStringList list;
     QList<TypeItem> listItems = getTypeItems(type, parentId);
+    qDebug() << __FUNCTION__ << listItems.size();
     for (const TypeItem& typeItem : listItems) {
         QString item;
         item.append(typeItem.typeId);
         item.append(typeItem.typeName);
         list.push_back(item);
     }
+    qDebug() << __FUNCTION__ << list;
     return list;
 }
 
 void TypeManager::addType(const QString &typeName, int type,
                           const QString &parentId, const QString &icon)
 {
+    qDebug() << __FUNCTION__ << typeName << type << parentId;
     d->typeItem.typeName = typeName;
     d->typeItem.type = KA::InorOut(type);
     d->typeItem.typeId = KA_UUID->createUuidV5();
@@ -121,20 +124,48 @@ void TypeManager::initData()
 
 void TypeManager::doAddTypeFinished()
 {
-    emit addTypeFinished(d->typeItem.typeId);
+    if (KA::IN == d->typeItem.type) {
+        if (d->typeItem.parentId == KA::TOP_TYPE_ID){
+            IncomeTypeTopList.push_back(d->typeItem);
+            qDebug() << __FUNCTION__ << "KA::IN addTopTypeFinished";
+            emit addTopTypeFinished(d->typeItem.typeName, d->typeItem.typeId);
+        } else {
+            IncomeTypeChildrenMap[d->typeItem.parentId].push_back(d->typeItem);
+            qDebug() << __FUNCTION__ << "KA::IN addChildTypeFinished";
+            emit addChildTypeFinished(d->typeItem.typeName, d->typeItem.typeId);
+        }
+    } else {
+        if (d->typeItem.parentId == KA::TOP_TYPE_ID){
+            ExpensesTypeTopList.push_back(d->typeItem);
+            qDebug() << __FUNCTION__ << "KA::OUT addTopTypeFinished";
+            emit addTopTypeFinished(d->typeItem.typeName, d->typeItem.typeId);
+        } else {
+            ExpensesTypeChildrenMap[d->typeItem.parentId].push_back(d->typeItem);
+            qDebug() << __FUNCTION__ << "KA::OUT addChildTypeFinished";
+            emit addChildTypeFinished(d->typeItem.typeName, d->typeItem.typeId);
+        }
+    }
 }
 
 QList<TypeItem> TypeManager::getTypeItems(int type, const QString &parentId)
 {
     qDebug() << __FUNCTION__ << type << parentId;
     if (KA::IN == type) {
-        return parentId.isEmpty()
-                ? IncomeTypeTopList
-                : IncomeTypeChildrenMap.value(parentId);
+        if (parentId == KA::TOP_TYPE_ID) {
+            qDebug() << __FUNCTION__ << "IncomeTypeTopList size:"
+                     << IncomeTypeTopList.size();
+            return IncomeTypeTopList;
+        } else {
+            return IncomeTypeChildrenMap.value(parentId);
+        }
     } else {
-        return parentId.isEmpty()
-                ? ExpensesTypeTopList
-                : ExpensesTypeChildrenMap.value(parentId);
+        if (parentId == KA::TOP_TYPE_ID) {
+            qDebug() << __FUNCTION__ << "ExpensesTypeTopList size:"
+                     << ExpensesTypeTopList.size();
+            return ExpensesTypeTopList;
+        } else {
+            return ExpensesTypeChildrenMap.value(parentId);
+        }
     }
 }
 
@@ -173,5 +204,6 @@ void InitTypeInfoWorker::doInitWork()
 
 void InitTypeInfoWorker::doAddWork(const TypeItem &typeItem)
 {
-    KA_DB->addTypeData(typeItem);
+    bool success = KA_DB->addTypeData(typeItem);
+    emit addFinished();
 }

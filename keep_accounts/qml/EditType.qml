@@ -6,7 +6,7 @@ Item {
     id: classifyEdit
 
     readonly property bool isExpenses: typeContainer.isExpensesType
-    readonly property int typeValue: isExpenses ? Config.in_type : Config.out_type
+    readonly property int typeValue: isExpenses ? Config.out_type : Config.in_type
 
     Rectangle{
         anchors.fill: parent
@@ -29,7 +29,7 @@ Item {
         anchors.topMargin: typeContainer.height + Config.margin
         clip: true
 
-        ClassifyListView{
+        ClassifyListView {
             id: topClassifyListView
 
             width: parent.width
@@ -78,6 +78,7 @@ Item {
                 var a = typeManager.getTypeInfo(typeValue, Config.topTypeId);
 
                 for(var i=0; i<a.length; ++i){
+
                     var item = a[i];
                     var uuid = item.substring(0, 36)
                     var name = item.substring(36)
@@ -124,14 +125,6 @@ Item {
 
                 lastTypeUuid = typeUuid
             }
-
-            Connections {
-                target: typeManager
-                ignoreUnknownSignals: true
-                onAddTypeFinished : {
-                    topClassifyListView.addType(text, typeId);
-                }
-            }
         }
 
         Rectangle{
@@ -156,14 +149,6 @@ Item {
                 typeManager.addType(text, typeValue,
                                     topClassifyListView.typeUuid);
             }
-
-            Connections {
-                target: typeManager
-                ignoreUnknownSignals: true
-                onAddTypeFinished : {
-                    childClassifyListView.addType(text, typeId);
-                }
-            }
         }
     }
 
@@ -173,9 +158,19 @@ Item {
         onInitTypeInfoFinished : {
             topClassifyListView.initTopItems()
         }
+        onAddTopTypeFinished : {
+            topClassifyListView.addType(typeName, typeId);
+        }
+        onAddChildTypeFinished : {
+            childClassifyListView.addType(typeName, typeId);
+        }
     }
 
     onTypeValueChanged: {
+        typeManager.initData();
+    }
+
+    Component.onCompleted: {
         typeManager.initData();
     }
 
