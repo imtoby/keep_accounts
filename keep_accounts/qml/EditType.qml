@@ -6,7 +6,8 @@ Item {
     id: classifyEdit
 
     readonly property bool isExpenses: typeContainer.isExpensesType
-    readonly property int typeValue: isExpenses ? Config.out_type : Config.in_type
+    readonly property int typeValue:
+        isExpenses ? Config.out_type : Config.in_type
 
     Rectangle{
         anchors.fill: parent
@@ -80,14 +81,15 @@ Item {
                 for(var i=0; i<a.length; ++i){
 
                     var item = a[i];
-                    var uuid = item.substring(0, 36)
-                    var name = item.substring(36)
+                    var uuid = item.substring(0, Config.typeIdLength)
+                    var name = item.substring(Config.typeIdLength)
                     addType(name, uuid);
                 }
 
                 if(a.length > 0){
                     currentIndex = 0
-                    typeChildrenCount = initChildItems(a[0].substring(0, 36) )
+                    typeChildrenCount = initChildItems(
+                                a[0].substring(0, Config.typeIdLength) )
                 }else{
                     childClassifyListView.clear()
                 }
@@ -98,8 +100,8 @@ Item {
                 var a = typeManager.getTypeInfo(typeValue, tUuid);
                 for(var i=0; i<a.length; ++i){
                     var item = a[i];
-                    var uuid = item.substring(0, 36)
-                    var name = item.substring(36)
+                    var uuid = item.substring(0, Config.typeIdLength)
+                    var name = item.substring(Config.typeIdLength)
                     childClassifyListView.addType(name, uuid);
                 }
 

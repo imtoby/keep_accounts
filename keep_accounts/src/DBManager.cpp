@@ -135,10 +135,12 @@ bool DBManager::addTypeData(const TypeItem &typeItem)
     return addSuccess;
 }
 
-void DBManager::updateTypeData(const QString &typeId, const QString &key,
+bool DBManager::updateTypeData(const QString &typeId, const QString &key,
                                const QString &value)
 {
     qDebug() << __FUNCTION__;
+
+    bool success = false;
 
     if (KA::TYPE_ITEM_CONTENT.contains(key)) {
 
@@ -161,15 +163,20 @@ void DBManager::updateTypeData(const QString &typeId, const QString &key,
 
             if(query.lastError().isValid()){
                 qDebug() << __FUNCTION__ << query.lastError();
+            } else {
+                success = true;
             }
 
             query.clear();
             db.close();
+            return success;
         }
 
     } else {
         qDebug() << __FUNCTION__ << " Error: key is not exsit.";
     }
+
+    return success;
 }
 
 QList<TypeItem> DBManager::getType(KA::InorOut inorOut,

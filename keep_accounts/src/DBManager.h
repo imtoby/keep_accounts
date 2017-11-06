@@ -33,7 +33,7 @@ public slots:
                           const QString &value);
 
     bool addTypeData(const TypeItem &typeItem);
-    void updateTypeData(const QString &typeId, const QString &key,
+    bool updateTypeData(const QString &typeId, const QString &key,
                         const QString &value);
 
     QList<TypeItem> getType(KA::InorOut inorOut,

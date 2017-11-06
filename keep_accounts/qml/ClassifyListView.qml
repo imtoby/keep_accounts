@@ -9,6 +9,8 @@ ListView{
     clip: true
     currentIndex: -1
 
+    readonly property string tag: "ClassifyListView"
+
     property string headerTitle: qsTr("一级项目")
     property string headerTitleRemark: qsTr("(点击添加)")
     readonly property string typeName: listModel.typeName
@@ -46,6 +48,7 @@ ListView{
         id: listModel
         property string typeName: ""
         property string typeUuid: ""
+        property int changedIndex: -1
     }
 
     model: listModel
@@ -93,7 +96,7 @@ ListView{
 
         Rectangle {
             anchors.fill: parent
-            anchors.margins: -1
+            anchors.margins: 6
             color: Config.lineColor
             opacity: typeName.length > 0
         }
@@ -104,10 +107,27 @@ ListView{
             clip: true
             anchors.leftMargin: Config.margin*2
             anchors.rightMargin: Config.margin*2
-            horizontalAlignment: Text.AlignLeft
+            horizontalAlignment: TextInput.AlignLeft
             verticalAlignment: TextInput.AlignVCenter
             color: Config.balanceColor
             text: typeName
+
+            onEditingFinished: {
+                console.log(tag,"onEditingFinished current text: ", text)
+                if (text.length > 0) {
+                    console.log(tag,"accept edit");
+                    listModel.changedIndex = currentIndex
+                    typeManager.setTypeName(typeUuid, text)
+                }
+            }
+
+            Connections {
+                target: typeManager
+                ignoreUnknownSignals: true
+                onSetTypeNameFinished: {
+                    listModel.get(listModel.changedIndex).name = newTypeName;
+                }
+            }
         }
 
         Keys.onReleased: {
@@ -116,9 +136,9 @@ ListView{
 
                 if(typeEditInput.length === 0){
                     if(typeChildrenCount > 0){
-                        console.log("typeChildrenCount: ", typeChildrenCount)
+                        console.log(tag,"typeChildrenCount: ", typeChildrenCount)
                     }else{
-                        console.log("to do show item dialog")
+                        console.log(tag,"to do show item dialog")
                     }
                 }
             }
@@ -327,7 +347,7 @@ ListView{
     highlightFollowsCurrentItem: true
 
     onCurrentIndexChanged: {
-        console.log("ClassifyListView onCurrentIndexChanged: ", currentIndex);
+        console.log(tag,"ClassifyListView onCurrentIndexChanged: ", currentIndex);
         listModel.typeName = listModel.get(currentIndex).name
         listModel.typeUuid = listModel.get(currentIndex).uuid
     }

@@ -37,6 +37,8 @@ QtObject{
     readonly property int out_type:  0x00
     readonly property int in_type:   0x01
 
+    readonly property int typeIdLength: 36
+
 
     function padZero(num, n) {
         var len = num.toString().length;

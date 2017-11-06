@@ -21,6 +21,31 @@ QMap<QString, QList<TypeItem>> IncomeTypeChildrenMap;
 QList<TypeItem> ExpensesTypeTopList;
 QMap<QString, QList<TypeItem>> ExpensesTypeChildrenMap;
 
+void InitDataWork() {
+    IncomeTypeTopList.clear();
+    IncomeTypeChildrenMap.clear();
+    IncomeTypeTopList = KA_DB->getType(KA::IN, KA::TOP_TYPE_ID);
+
+    QString topTypeId;
+    QList<TypeItem> childrenList;
+
+    for (const TypeItem& typeItem : IncomeTypeTopList) {
+        topTypeId = typeItem.typeId;
+        childrenList = KA_DB->getType(KA::IN, topTypeId);
+        IncomeTypeChildrenMap.insert(topTypeId, childrenList);
+    }
+
+    ExpensesTypeTopList.clear();
+    ExpensesTypeChildrenMap.clear();
+    ExpensesTypeTopList = KA_DB->getType(KA::OUT, KA::TOP_TYPE_ID);
+
+    for (const TypeItem& typeItem : ExpensesTypeTopList) {
+        topTypeId = typeItem.typeId;
+        childrenList = KA_DB->getType(KA::OUT, topTypeId);
+        ExpensesTypeChildrenMap.insert(topTypeId, childrenList);
+    }
+}
+
 }
 
 class TypeManagerPrivate
@@ -38,18 +63,24 @@ TypeManager::TypeManager(QObject *parent)
     : QObject(parent)
     , d(new TypeManagerPrivate())
 {
-    InitTypeInfoWorker *worker = new InitTypeInfoWorker;
+    TypeManagerWorker *worker = new TypeManagerWorker;
     worker->moveToThread(&d->workerThread);
     connect(&d->workerThread, &QThread::finished,
             worker, &QObject::deleteLater);
     connect(this, &TypeManager::startInitTypeInfo,
-            worker, &InitTypeInfoWorker::doInitWork);
+            worker, &TypeManagerWorker::doInitWork);
     connect(this, &TypeManager::startAddType,
-            worker, &InitTypeInfoWorker::doAddWork);
-    connect(worker, &InitTypeInfoWorker::initReady,
+            worker, &TypeManagerWorker::doAddType);
+    connect(this, &TypeManager::startSetTypeName,
+            worker, &TypeManagerWorker::doSetTypeName);
+
+
+    connect(worker, &TypeManagerWorker::initReady,
             this, &TypeManager::initTypeInfoFinished);
-    connect(worker, &InitTypeInfoWorker::addFinished,
+    connect(worker, &TypeManagerWorker::addTypeFinished,
             this, &TypeManager::doAddTypeFinished);
+    connect(worker, &TypeManagerWorker::setTypeNameFinished,
+            this, &TypeManager::setTypeNameFinished);
     d->workerThread.start();
 }
 
@@ -117,6 +148,11 @@ void TypeManager::addType(const QString &typeName, int type,
     emit startAddType(d->typeItem);
 }
 
+void TypeManager::setTypeName(const QString &typeId, const QString &typeName)
+{
+    emit startSetTypeName(typeId, typeName);
+}
+
 void TypeManager::initData()
 {
     emit startInitTypeInfo();
@@ -169,32 +205,10 @@ QList<TypeItem> TypeManager::getTypeItems(int type, const QString &parentId)
     }
 }
 
-void InitTypeInfoWorker::doInitWork()
+void TypeManagerWorker::doInitWork()
 {
     qDebug() << __FUNCTION__;
-    IncomeTypeTopList.clear();
-    IncomeTypeChildrenMap.clear();
-    IncomeTypeTopList = KA_DB->getType(KA::IN, KA::TOP_TYPE_ID);
-
-    QString topTypeId;
-    QList<TypeItem> childrenList;
-
-    for (const TypeItem& typeItem : IncomeTypeTopList) {
-        topTypeId = typeItem.typeId;
-        childrenList = KA_DB->getType(KA::IN, topTypeId);
-        IncomeTypeChildrenMap.insert(topTypeId, childrenList);
-    }
-
-    ExpensesTypeTopList.clear();
-    ExpensesTypeChildrenMap.clear();
-    ExpensesTypeTopList = KA_DB->getType(KA::OUT, KA::TOP_TYPE_ID);
-
-    for (const TypeItem& typeItem : ExpensesTypeTopList) {
-        topTypeId = typeItem.typeId;
-        childrenList = KA_DB->getType(KA::OUT, topTypeId);
-        ExpensesTypeChildrenMap.insert(topTypeId, childrenList);
-    }
-
+    InitDataWork();
     qDebug() << __FUNCTION__
              << IncomeTypeTopList.size()
              << ExpensesTypeTopList.size();
@@ -202,12 +216,24 @@ void InitTypeInfoWorker::doInitWork()
     emit initReady();
 }
 
-void InitTypeInfoWorker::doAddWork(const TypeItem &typeItem)
+void TypeManagerWorker::doAddType(const TypeItem &typeItem)
 {
     bool success = KA_DB->addTypeData(typeItem);
     if (success) {
-        emit addFinished();
+        emit addTypeFinished();
     } else {
-        qDebug() << __FUNCTION__ << "addType failed";
+        qDebug() << __FUNCTION__ << "doAddType failed";
+    }
+}
+
+void TypeManagerWorker::doSetTypeName(const QString &typeId,
+                                       const QString &typeName)
+{
+    bool success = KA_DB->updateTypeData(typeId, KA::TYPE_NAME, typeName);
+    if (success) {
+        emit setTypeNameFinished(typeName);
+        InitDataWork();
+    } else {
+        qDebug() << __FUNCTION__ << "doSetTypeName failed";
     }
 }

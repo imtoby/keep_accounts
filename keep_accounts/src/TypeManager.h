@@ -15,16 +15,18 @@
 
 class TypeManagerPrivate;
 
-class InitTypeInfoWorker : public QObject
+class TypeManagerWorker : public QObject
 {
     Q_OBJECT
 public slots:
     void doInitWork();
-    void doAddWork(const TypeItem &typeItem);
+    void doAddType(const TypeItem &typeItem);
+    void doSetTypeName(const QString& typeId, const QString& typeName);
 
 signals:
     void initReady();
-    void addFinished();
+    void addTypeFinished();
+    void setTypeNameFinished(const QString& newTypeName);
 };
 
 class TypeManager : public QObject
@@ -42,17 +44,23 @@ public:
     Q_INVOKABLE void addType(const QString& typeName, int type,
                              const QString& parentId = QString(),
                              const QString& icon = QString());
+    Q_INVOKABLE void setTypeName(const QString& typeId, const QString& typeName);
 
 public slots:
     void initData();
+
+private slots:
     void doAddTypeFinished();
 
 signals:
     void startInitTypeInfo();
     void startAddType(const TypeItem &typeItem);
+    void startSetTypeName(const QString& typeId, const QString& typeName);
+
     void initTypeInfoFinished();
     void addTopTypeFinished(const QString& typeName, const QString& typeId);
     void addChildTypeFinished(const QString& typeName, const QString& typeId);
+    void setTypeNameFinished(const QString& newTypeName);
 
 private:
     QList<TypeItem> getTypeItems(int type, const QString& parentId = QString());
