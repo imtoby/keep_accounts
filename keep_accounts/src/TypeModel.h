@@ -10,7 +10,7 @@ class TypeModel : public ObjectModel
     Q_OBJECT
     Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
 public:
-    explicit TypeModel(ObjectModel* parent = nullptr);
+    explicit TypeModel(QObject* parent = nullptr);
     ~TypeModel();
 
     int type() const;

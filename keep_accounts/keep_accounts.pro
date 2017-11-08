@@ -9,7 +9,9 @@ SOURCES += main.cpp \
     src/TypeManager.cpp \
     src/TypeItem.cpp \
     src/base/ObjectModel.cpp \
-    src/TypeModel.cpp
+    src/TypeModel.cpp \
+    src/TypeInfo.cpp \
+    src/InfoManager.cpp
 
 RESOURCES += qml.qrc \
     res.qrc
@@ -46,4 +48,6 @@ HEADERS += \
     src/TypeManager.h \
     src/base/ObjectModel.h \
     src/TypeModel.h \
-    src/base/kglobal.h
+    src/base/kglobal.h \
+    src/TypeInfo.h \
+    src/InfoManager.h

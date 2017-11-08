@@ -8,6 +8,7 @@
 
 #include "ConfigInfo.h"
 #include "RecordItem.h"
+#include "TypeInfo.h"
 
 namespace {
 
@@ -232,6 +233,61 @@ QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
         }
     }
     return QList<TypeItem>();
+}
+
+QObjectList DBManager::getTypeInfos(KA::InorOut inorOut,
+                                    const QString &parentId)
+{
+    if (typeCount(parentId) > 0) {
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+            const QString sqlString = QString("select "
+                                              + KA::ID           + ","
+                                              + KA::TYPE         + ","
+                                              + KA::TYPE_NAME    + ","
+                                              + KA::INDEX        + ","
+                                              + KA::MILLON_SECS  + ","
+                                              + KA::ICON         + ","
+                                              + KA::PARENT_ID    +
+                                              " from "     + KA::DATABASE_TABLE_NAME_TYPE +
+                                              " where "    + KA::TYPE +
+                                              "='%1'"
+                                              " and "      + KA::PARENT_ID +
+                                              "='%2' order by " + KA::MILLON_SECS +
+                                              " ASC")
+                    .arg(QString::number(inorOut))
+                    .arg(parentId);
+
+            qDebug() << __FUNCTION__ << "sqlString: " << sqlString;
+
+            query.exec(sqlString);
+
+            QObjectList list;
+            while (query.next()) {
+                TypeInfo* item = new TypeInfo(0);
+                item->setTypeId(        query.value(0).toString());
+                item->setType(          query.value(1).toInt());
+                item->setTypeName(      query.value(2).toString());
+                item->setIndex(         query.value(3).toString());
+                item->setMillonSecs(    query.value(4).toULongLong());
+                item->setIcon(          query.value(5).toString());
+                item->setParentId(      query.value(6).toString());
+                list.push_back(item);
+            }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+            query.clear();
+            db.close();
+
+            qDebug() << __FUNCTION__ << "list.size: " << list.size();
+
+            return list;
+        }
+    }
+    return QObjectList();
 }
 
 int DBManager::typeCount(const QString &parentId) const

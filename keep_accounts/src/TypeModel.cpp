@@ -18,7 +18,7 @@ private:
     KA::InorOut type;
 };
 
-TypeModel::TypeModel(ObjectModel* parent)
+TypeModel::TypeModel(QObject* parent)
     : ObjectModel(parent)
     , d_ptr(new TypeModelPrivate(this))
 {
