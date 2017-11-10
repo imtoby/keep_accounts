@@ -12,8 +12,6 @@
 
 class ObjectModelPrivate;
 
-typedef QList<QObject* > QObjectList;
-
 class ObjectModel : public QAbstractListModel
 {
     Q_OBJECT

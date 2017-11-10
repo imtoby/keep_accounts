@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "TypeModel.h"
+#include "ConfigInfo.h"
 
 class InfoManagerPrivate;
 
@@ -15,7 +16,8 @@ public:
     ~InfoManager();
 
     Q_INVOKABLE void initData();
-    Q_INVOKABLE TypeModel* typeModel();
+    Q_INVOKABLE TypeModel* typeModel(int type,
+                                     const QString& parentId = KA::TOP_TYPE_ID);
 
 private:
     void initTypeData();

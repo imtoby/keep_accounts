@@ -1,4 +1,5 @@
 #include "InfoManager.h"
+#include "DBManager.h"
 
 class InfoManagerPrivate
 {
@@ -37,15 +38,19 @@ void InfoManager::initData()
     initTypeData();
 }
 
-TypeModel *InfoManager::typeModel()
+TypeModel *InfoManager::typeModel(int type, const QString& parentId)
 {
     Q_D(InfoManager);
+
+    QObjectList infos = KA_DB->getTypeInfos(KA::InorOut(type), parentId);
+    d->typeModel->clear();
+    d->typeModel->set(&infos);
+
     return d->typeModel;
 }
 
 void InfoManager::initTypeData()
 {
-
 }
 
 void InfoManagerPrivate::init()
