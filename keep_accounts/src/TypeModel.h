@@ -2,6 +2,7 @@
 #define TYPEMODEL_H_AEB5BAAE_7DBF_531A_A17E_123B9E0D0EA9
 
 #include "base/ObjectModel.h"
+#include "TypeInfo.h"
 
 class TypeModelPrivate;
 
@@ -15,6 +16,8 @@ public:
 
     int type() const;
     void setType(int type);
+
+    TypeInfo* getTypeInfoByTypeId(const QString& typeId);
 
 signals:
     void typeChanged();

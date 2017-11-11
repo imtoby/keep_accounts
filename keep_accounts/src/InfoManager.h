@@ -19,6 +19,10 @@ public:
     Q_INVOKABLE TypeModel* typeModel(int type,
                                      const QString& parentId = KA::TOP_TYPE_ID);
 
+    Q_INVOKABLE void setTypeName(int type, const QString& typeId,
+                                 const QString& parentId,
+                                 const QString& typeName);
+
 signals:
     void initTypeFinished();
 

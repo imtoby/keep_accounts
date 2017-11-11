@@ -204,8 +204,6 @@ QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
                     .arg(QString::number(inorOut))
                     .arg(parentId);
 
-            qDebug() << __FUNCTION__ << "sqlString: " << sqlString;
-
             query.exec(sqlString);
 
             QList<TypeItem> list;
@@ -259,8 +257,6 @@ QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
                     .arg(QString::number(inorOut))
                     .arg(parentId);
 
-            qDebug() << __FUNCTION__ << "sqlString: " << sqlString;
-
             query.exec(sqlString);
 
             QObjectList list;
@@ -305,8 +301,6 @@ int DBManager::typeCount(const QString &parentId) const
                                           " where " + KA::PARENT_ID + "='%1'").arg(parentId);
 
         query.exec(sqlString);
-
-        qDebug() << __FUNCTION__ << "sqlString: " << sqlString;
 
         while (query.next()) {
             count = query.value(0).toInt();

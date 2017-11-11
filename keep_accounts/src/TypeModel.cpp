@@ -42,3 +42,14 @@ void TypeModel::setType(int type)
         emit typeChanged();
     }
 }
+
+TypeInfo *TypeModel::getTypeInfoByTypeId(const QString &typeId)
+{
+    foreach (QObject* object, *this->getAll()) {
+        TypeInfo* info = qobject_cast<TypeInfo*>(object);
+        if (info->typeId() == typeId) {
+            return info;
+        }
+    }
+    return NULL;
+}

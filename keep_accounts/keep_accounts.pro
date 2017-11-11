@@ -6,8 +6,6 @@ SOURCES += main.cpp \
     src/DBManager.cpp \
     src/RecordItem.cpp \
     src/ZUuid.cpp \
-    src/TypeManager.cpp \
-    src/TypeItem.cpp \
     src/base/ObjectModel.cpp \
     src/TypeModel.cpp \
     src/TypeInfo.cpp \
@@ -42,10 +40,8 @@ HEADERS += \
     src/DBManager.h \
     src/RecordItem.h \
     src/ConfigInfo.h \
-    src/TypeItem.h \
     src/CSingleton.h \
     src/ZUuid.h \
-    src/TypeManager.h \
     src/base/ObjectModel.h \
     src/TypeModel.h \
     src/base/kglobal.h \

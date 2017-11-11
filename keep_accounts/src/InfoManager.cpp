@@ -2,6 +2,8 @@
 #include "DBManager.h"
 #include "TypeInfo.h"
 
+#include <QDebug>
+
 class InfoManagerPrivate
 {
 public:
@@ -32,7 +34,6 @@ InfoManager::InfoManager(QObject *parent)
 {
     Q_D(InfoManager);
     d->init();
-    initData();
 }
 
 InfoManager::~InfoManager()
@@ -71,6 +72,35 @@ TypeModel *InfoManager::typeModel(int type, const QString& parentId)
     }
 
     return d->topOutModel;
+}
+
+void InfoManager::setTypeName(int type, const QString &typeId,
+                              const QString &parentId,
+                              const QString &typeName)
+{
+    Q_D(InfoManager);
+    bool success = KA_DB->updateTypeData(typeId, KA::TYPE_NAME, typeName);
+    if (success) {
+        TypeInfo* info = NULL;
+        if (KA::OUT == type) {
+            if (parentId == KA::TOP_TYPE_ID) {
+                info = d->topOutModel->getTypeInfoByTypeId(typeId);
+            } else {
+                info = d->childOutModel->getTypeInfoByTypeId(typeId);
+            }
+        } else {
+            if (parentId == KA::TOP_TYPE_ID) {
+                info = d->topInModel->getTypeInfoByTypeId(typeId);
+            } else {
+                info = d->childInModel->getTypeInfoByTypeId(typeId);
+            }
+        }
+        if (NULL != info) {
+            info->setTypeName(typeName);
+        }
+    } else {
+        qDebug() << __FUNCTION__ << "doSetTypeName failed";
+    }
 }
 
 void InfoManager::initTypeData()

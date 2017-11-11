@@ -12,45 +12,34 @@ ListView{
 
     property string headerTitle: qsTr("一级项目")
     property string headerTitleRemark: qsTr("(点击添加)")
-    readonly property string typeName: pData.typeName
-    readonly property string typeUuid: pData.typeUuid
+
+    readonly property string typeName:
+        (listModel !== null) && (listModel.get(currentIndex) !== null) ?
+            listModel.get(currentIndex).typeName : ""
+
+    readonly property string typeId:
+        (listModel !== null) && (listModel.get(currentIndex) !== null) ?
+            listModel.get(currentIndex).typeId : ""
+
+    readonly property string parentId:
+        (listModel !== null) && (listModel.get(currentIndex) !== null) ?
+            listModel.get(currentIndex).parentId : ""
+
     property int typeChildrenCount: 0
 
     property QtObject listModel: null
+
+    property int inOrOutType: Config.out_type
 
     function hideHeaderTitle(){
         headerItem.hide()
         rejected()
     }
 
-//    function addType(tName, tUuid) {
-//        listModel.append({"name":tName,"uuid":tUuid})
-//        if (listModel.typeName.length === 0) {
-//            listModel.typeName = tName // for typeEditInput empty
-//        }
-//        if (listModel.typeUuid.length === 0) {
-//            listModel.typeUuid = tUuid
-//        }
-//    }
-
-//    function clear(){
-//        listModel.clear()
-//        listModel.typeName = ""
-//        listModel.typeUuid = ""
-//        typeChildrenCount = 0
-//    }
-
     signal headerTitleShown()
     signal accepted(string text)
     signal rejected()
     signal typeChanged()
-
-//    ListModel{
-//        id: listModel
-//        property string typeName: ""
-//        property string typeUuid: ""
-//        property int changedIndex: -1
-//    }
 
     model: listModel
 
@@ -58,6 +47,8 @@ ListView{
         width: topClassifyView.width
         height: 40
         enabled: currentIndex !== index
+
+        readonly property string typeName: model.modelData.typeName
 
         Text {
             anchors.fill: parent
@@ -108,24 +99,15 @@ ListView{
             horizontalAlignment: TextInput.AlignLeft
             verticalAlignment: TextInput.AlignVCenter
             color: Config.balanceColor
-            text: typeName
+            text: topClassifyView.currentItem.typeName
 
             onEditingFinished: {
-                console.log(tag,"onEditingFinished current text: ", text)
-//                if (text.length > 0) {
-//                    console.log(tag,"accept edit");
-//                    listModel.changedIndex = currentIndex
-//                    typeManager.setTypeName(typeUuid, text)
-//                }
+                console.log(tag,"onAccepted current text: ", text)
+                if (text.length > 0) {
+                    console.log(tag,"accept edit");
+                    infoManager.setTypeName(inOrOutType, typeId, parentId, text);
+                }
             }
-
-//            Connections {
-//                target: typeManager
-//                ignoreUnknownSignals: true
-//                onSetTypeNameFinished: {
-//                    listModel.get(listModel.changedIndex).name = newTypeName;
-//                }
-//            }
         }
 
         Keys.onReleased: {
@@ -343,17 +325,5 @@ ListView{
     }
 
     highlightFollowsCurrentItem: true
-
-    onCurrentIndexChanged: {
-        console.log(tag,"ClassifyListView onCurrentIndexChanged: ", currentIndex);
-        pData.typeName = model.get(currentIndex).typeName
-        pData.typeUuid = model.get(currentIndex).typeId
-    }
-
-    QtObject {
-        id: pData
-        property string typeName: ""
-        property string typeUuid: ""
-    }
 }
 

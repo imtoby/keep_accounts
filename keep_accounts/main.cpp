@@ -4,7 +4,6 @@
 #include <QQmlContext>
 
 #include "src/InfoManager.h"
-//#include "src/TypeItem.h"
 #include "src/TypeModel.h"
 
 int main(int argc, char *argv[])
@@ -13,8 +12,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
-
-//    qRegisterMetaType<TypeItem>("TypeItem");
 
     qmlRegisterUncreatableType<TypeModel, 1>("com.toby.keep_accounts", 1, 0,
                                              "TypeModel",

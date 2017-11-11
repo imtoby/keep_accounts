@@ -6,7 +6,7 @@ Item {
     id: classifyEdit
 
     readonly property bool isExpenses: typeContainer.isExpensesType
-    readonly property int typeValue:
+    readonly property int inOrOutType:
         isExpenses ? Config.out_type : Config.in_type
 
     Rectangle{
@@ -34,10 +34,8 @@ Item {
             id: topClassifyListView
 
             width: parent.width
-
             state: count > 0 ? "showChild" : ""
-
-            listModel: infoManager.typeModel(typeValue, Config.topTypeId)
+            inOrOutType: classifyEdit.inOrOutType
 
             states: [
                 State {
@@ -73,46 +71,7 @@ Item {
                 }
             ]
 
-            property string lastTypeUuid: ""
-
-//            function initTopItems(){
-//                console.log("initTopItems")
-//                clear();
-//                var a = typeManager.getTypeInfo(typeValue, Config.topTypeId);
-
-//                for(var i=0; i<a.length; ++i){
-
-//                    var item = a[i];
-//                    var uuid = item.substring(0, Config.typeIdLength)
-//                    var name = item.substring(Config.typeIdLength)
-//                    addType(name, uuid);
-//                }
-
-//                if(a.length > 0){
-//                    currentIndex = 0
-//                    typeChildrenCount = initChildItems(
-//                                a[0].substring(0, Config.typeIdLength) )
-//                }else{
-//                    childClassifyListView.clear()
-//                }
-//            }
-
-//            function initChildItems(tUuid){
-//                childClassifyListView.clear()
-//                var a = typeManager.getTypeInfo(typeValue, tUuid);
-//                for(var i=0; i<a.length; ++i){
-//                    var item = a[i];
-//                    var uuid = item.substring(0, Config.typeIdLength)
-//                    var name = item.substring(Config.typeIdLength)
-//                    childClassifyListView.addType(name, uuid);
-//                }
-
-//                if(a.length > 0){
-//                    childClassifyListView.currentIndex = 0
-//                }
-
-//                return a.length
-//            }
+            property string lastTypeId: ""
 
             onHeaderTitleShown: {
                 childClassifyListView.hideHeaderTitle()
@@ -123,11 +82,11 @@ Item {
             }
 
             onTypeChanged: {
-                if(lastTypeUuid !== typeUuid){
+                if(lastTypeId !== typeId){
                     childClassifyListView.currentIndex = 0
                 }
 
-                lastTypeUuid = typeUuid
+                lastTypeId = typeId
             }
         }
 
@@ -148,9 +107,7 @@ Item {
                 topClassifyListView.hideHeaderTitle()
             }
             opacity: 0
-            listModel: infoManager.typeModel(typeValue,
-                                             topClassifyListView.typeUuid)
-
+            inOrOutType: classifyEdit.inOrOutType
             onAccepted: {
 //                typeManager.addType(text, typeValue,
 //                                    topClassifyListView.typeUuid);
@@ -158,26 +115,24 @@ Item {
         }
     }
 
-//    Connections {
-//        target: typeManager
-//        ignoreUnknownSignals: true
-//        onInitTypeInfoFinished : {
-//            topClassifyListView.initTopItems()
-//        }
-//        onAddTopTypeFinished : {
-//            topClassifyListView.addType(typeName, typeId);
-//        }
-//        onAddChildTypeFinished : {
-//            childClassifyListView.addType(typeName, typeId);
-//        }
-//    }
+    Connections {
+        target: infoManager
+        ignoreUnknownSignals: true
+        onInitTypeFinished : {
+            topClassifyListView.listModel =
+                    Qt.binding(function(){
+                        return infoManager.typeModel(inOrOutType,
+                                                     Config.topTypeId) })
+            childClassifyListView.listModel =
+                    Qt.binding(function(){
+                        return infoManager.typeModel(inOrOutType,
+                                                     topClassifyListView.typeId) })
 
-//    onTypeValueChanged: {
-//        typeManager.initData();
-//    }
+        }
+    }
 
-//    Component.onCompleted: {
-//        typeManager.initData();
-//    }
+    Component.onCompleted: {
+        infoManager.initData();
+    }
 
 }
