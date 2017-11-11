@@ -235,7 +235,7 @@ QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
     return QList<TypeItem>();
 }
 
-QObjectList DBManager::getTypeInfos(KA::InorOut inorOut,
+QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
                                     const QString &parentId)
 {
     if (typeCount(parentId) > 0) {
@@ -265,7 +265,7 @@ QObjectList DBManager::getTypeInfos(KA::InorOut inorOut,
 
             QObjectList list;
             while (query.next()) {
-                TypeInfo* item = new TypeInfo(0);
+                TypeInfo* item = new TypeInfo(parent);
                 item->setTypeId(        query.value(0).toString());
                 item->setType(          query.value(1).toInt());
                 item->setTypeName(      query.value(2).toString());

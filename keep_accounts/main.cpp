@@ -3,8 +3,9 @@
 #include <QQmlEngine>
 #include <QQmlContext>
 
-#include "src/TypeManager.h"
-#include "src/TypeItem.h"
+#include "src/InfoManager.h"
+//#include "src/TypeItem.h"
+#include "src/TypeModel.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,11 +14,15 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    qRegisterMetaType<TypeItem>("TypeItem");
+//    qRegisterMetaType<TypeItem>("TypeItem");
 
-    TypeManager* typeManager = new TypeManager(&app);
+    qmlRegisterUncreatableType<TypeModel, 1>("com.toby.keep_accounts", 1, 0,
+                                             "TypeModel",
+                                             "Cannot create TypeModel.");
 
-    engine.rootContext()->setContextProperty("typeManager", typeManager);
+    InfoManager* infoManager = new InfoManager(&app);
+
+    engine.rootContext()->setContextProperty("infoManager", infoManager);
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())

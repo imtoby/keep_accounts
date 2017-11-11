@@ -7,49 +7,50 @@ ListView{
     width: parent.width/2
     height: parent.height
     clip: true
-    currentIndex: -1
 
     readonly property string tag: "ClassifyListView"
 
     property string headerTitle: qsTr("一级项目")
     property string headerTitleRemark: qsTr("(点击添加)")
-    readonly property string typeName: listModel.typeName
-    readonly property string typeUuid: listModel.typeUuid
+    readonly property string typeName: pData.typeName
+    readonly property string typeUuid: pData.typeUuid
     property int typeChildrenCount: 0
+
+    property QtObject listModel: null
 
     function hideHeaderTitle(){
         headerItem.hide()
         rejected()
     }
 
-    function addType(tName, tUuid) {
-        listModel.append({"name":tName,"uuid":tUuid})
-        if (listModel.typeName.length === 0) {
-            listModel.typeName = tName // for typeEditInput empty
-        }
-        if (listModel.typeUuid.length === 0) {
-            listModel.typeUuid = tUuid
-        }
-    }
+//    function addType(tName, tUuid) {
+//        listModel.append({"name":tName,"uuid":tUuid})
+//        if (listModel.typeName.length === 0) {
+//            listModel.typeName = tName // for typeEditInput empty
+//        }
+//        if (listModel.typeUuid.length === 0) {
+//            listModel.typeUuid = tUuid
+//        }
+//    }
 
-    function clear(){
-        listModel.clear()
-        listModel.typeName = ""
-        listModel.typeUuid = ""
-        typeChildrenCount = 0
-    }
+//    function clear(){
+//        listModel.clear()
+//        listModel.typeName = ""
+//        listModel.typeUuid = ""
+//        typeChildrenCount = 0
+//    }
 
     signal headerTitleShown()
     signal accepted(string text)
     signal rejected()
     signal typeChanged()
 
-    ListModel{
-        id: listModel
-        property string typeName: ""
-        property string typeUuid: ""
-        property int changedIndex: -1
-    }
+//    ListModel{
+//        id: listModel
+//        property string typeName: ""
+//        property string typeUuid: ""
+//        property int changedIndex: -1
+//    }
 
     model: listModel
 
@@ -62,8 +63,8 @@ ListView{
             anchors.fill: parent
             anchors.leftMargin: 2*Config.margin
             verticalAlignment: Text.AlignVCenter
-            text: (currentIndex === index)
-                  ? "" : ( (typeof name != "undefined") ? name : "" )
+            text: model.modelData.typeName
+            opacity: currentIndex !== index
         }
 
         Rectangle{
@@ -76,8 +77,6 @@ ListView{
 
         onClicked: {
             currentIndex = index
-            listModel.typeName = listModel.get(currentIndex).name
-            listModel.typeUuid = listModel.get(currentIndex).uuid
             typeChanged()
         }
     }
@@ -98,7 +97,6 @@ ListView{
             anchors.fill: parent
             anchors.margins: 6
             color: Config.lineColor
-            opacity: typeName.length > 0
         }
 
         TextInput {
@@ -114,20 +112,20 @@ ListView{
 
             onEditingFinished: {
                 console.log(tag,"onEditingFinished current text: ", text)
-                if (text.length > 0) {
-                    console.log(tag,"accept edit");
-                    listModel.changedIndex = currentIndex
-                    typeManager.setTypeName(typeUuid, text)
-                }
+//                if (text.length > 0) {
+//                    console.log(tag,"accept edit");
+//                    listModel.changedIndex = currentIndex
+//                    typeManager.setTypeName(typeUuid, text)
+//                }
             }
 
-            Connections {
-                target: typeManager
-                ignoreUnknownSignals: true
-                onSetTypeNameFinished: {
-                    listModel.get(listModel.changedIndex).name = newTypeName;
-                }
-            }
+//            Connections {
+//                target: typeManager
+//                ignoreUnknownSignals: true
+//                onSetTypeNameFinished: {
+//                    listModel.get(listModel.changedIndex).name = newTypeName;
+//                }
+//            }
         }
 
         Keys.onReleased: {
@@ -167,7 +165,7 @@ ListView{
         function hide(){
             topBtn.state = ""
 
-            topClassifyView.model = listModel
+            topClassifyView.model = Qt.binding(function(){return listModel})
         }
 
         function show(){
@@ -348,8 +346,14 @@ ListView{
 
     onCurrentIndexChanged: {
         console.log(tag,"ClassifyListView onCurrentIndexChanged: ", currentIndex);
-        listModel.typeName = listModel.get(currentIndex).name
-        listModel.typeUuid = listModel.get(currentIndex).uuid
+        pData.typeName = model.get(currentIndex).typeName
+        pData.typeUuid = model.get(currentIndex).typeId
+    }
+
+    QtObject {
+        id: pData
+        property string typeName: ""
+        property string typeUuid: ""
     }
 }
 

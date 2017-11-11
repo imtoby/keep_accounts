@@ -7,6 +7,7 @@
  ***************************************************************************/
 #include "ObjectModel.h"
 #include <QMutex>
+#include <QDebug>
 
 #include "kglobal.h"
 
@@ -177,12 +178,20 @@ void ObjectModel::remove(int index)
 void ObjectModel::clear()
 {
     Q_D(ObjectModel);
-    d->mutex->lock();
-    beginResetModel();
-    qDeleteAll(d->objectList.begin(), d->objectList.end());
-    d->objectList.clear();
-    endResetModel();
-    d->mutex->unlock();
+    if (d->objectList.size() > 0) {
+        d->mutex->lock();
+        beginResetModel();
+        qDeleteAll(d->objectList);
+        d->objectList.clear();
+        endResetModel();
+        d->mutex->unlock();
+    }
+}
+
+int ObjectModel::count() const
+{
+    C_D(ObjectModel);
+    return d->objectList.size();
 }
 
 QObject *ObjectModel::get(int index)
@@ -218,7 +227,7 @@ void ObjectModelPrivate::init()
 
 void ObjectModelPrivate::uninit()
 {
-    qDeleteAll(objectList.begin(), objectList.end());
+    qDeleteAll(objectList);
     objectList.clear();
     rolesNames.clear();
     if (mutex) {

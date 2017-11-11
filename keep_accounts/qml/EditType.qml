@@ -37,6 +37,8 @@ Item {
 
             state: count > 0 ? "showChild" : ""
 
+            listModel: infoManager.typeModel(typeValue, Config.topTypeId)
+
             states: [
                 State {
                     name: "showChild"
@@ -73,56 +75,56 @@ Item {
 
             property string lastTypeUuid: ""
 
-            function initTopItems(){
-                console.log("initTopItems")
-                clear();
-                var a = typeManager.getTypeInfo(typeValue, Config.topTypeId);
+//            function initTopItems(){
+//                console.log("initTopItems")
+//                clear();
+//                var a = typeManager.getTypeInfo(typeValue, Config.topTypeId);
 
-                for(var i=0; i<a.length; ++i){
+//                for(var i=0; i<a.length; ++i){
 
-                    var item = a[i];
-                    var uuid = item.substring(0, Config.typeIdLength)
-                    var name = item.substring(Config.typeIdLength)
-                    addType(name, uuid);
-                }
+//                    var item = a[i];
+//                    var uuid = item.substring(0, Config.typeIdLength)
+//                    var name = item.substring(Config.typeIdLength)
+//                    addType(name, uuid);
+//                }
 
-                if(a.length > 0){
-                    currentIndex = 0
-                    typeChildrenCount = initChildItems(
-                                a[0].substring(0, Config.typeIdLength) )
-                }else{
-                    childClassifyListView.clear()
-                }
-            }
+//                if(a.length > 0){
+//                    currentIndex = 0
+//                    typeChildrenCount = initChildItems(
+//                                a[0].substring(0, Config.typeIdLength) )
+//                }else{
+//                    childClassifyListView.clear()
+//                }
+//            }
 
-            function initChildItems(tUuid){
-                childClassifyListView.clear()
-                var a = typeManager.getTypeInfo(typeValue, tUuid);
-                for(var i=0; i<a.length; ++i){
-                    var item = a[i];
-                    var uuid = item.substring(0, Config.typeIdLength)
-                    var name = item.substring(Config.typeIdLength)
-                    childClassifyListView.addType(name, uuid);
-                }
+//            function initChildItems(tUuid){
+//                childClassifyListView.clear()
+//                var a = typeManager.getTypeInfo(typeValue, tUuid);
+//                for(var i=0; i<a.length; ++i){
+//                    var item = a[i];
+//                    var uuid = item.substring(0, Config.typeIdLength)
+//                    var name = item.substring(Config.typeIdLength)
+//                    childClassifyListView.addType(name, uuid);
+//                }
 
-                if(a.length > 0){
-                    childClassifyListView.currentIndex = 0
-                }
+//                if(a.length > 0){
+//                    childClassifyListView.currentIndex = 0
+//                }
 
-                return a.length
-            }
+//                return a.length
+//            }
 
             onHeaderTitleShown: {
                 childClassifyListView.hideHeaderTitle()
             }
 
             onAccepted: {
-                typeManager.addType(text, typeValue, Config.topTypeId);
+//                typeManager.addType(text, typeValue, Config.topTypeId);
             }
 
             onTypeChanged: {
                 if(lastTypeUuid !== typeUuid){
-                    typeChildrenCount = initChildItems(typeUuid)
+                    childClassifyListView.currentIndex = 0
                 }
 
                 lastTypeUuid = typeUuid
@@ -146,34 +148,36 @@ Item {
                 topClassifyListView.hideHeaderTitle()
             }
             opacity: 0
+            listModel: infoManager.typeModel(typeValue,
+                                             topClassifyListView.typeUuid)
 
             onAccepted: {
-                typeManager.addType(text, typeValue,
-                                    topClassifyListView.typeUuid);
+//                typeManager.addType(text, typeValue,
+//                                    topClassifyListView.typeUuid);
             }
         }
     }
 
-    Connections {
-        target: typeManager
-        ignoreUnknownSignals: true
-        onInitTypeInfoFinished : {
-            topClassifyListView.initTopItems()
-        }
-        onAddTopTypeFinished : {
-            topClassifyListView.addType(typeName, typeId);
-        }
-        onAddChildTypeFinished : {
-            childClassifyListView.addType(typeName, typeId);
-        }
-    }
+//    Connections {
+//        target: typeManager
+//        ignoreUnknownSignals: true
+//        onInitTypeInfoFinished : {
+//            topClassifyListView.initTopItems()
+//        }
+//        onAddTopTypeFinished : {
+//            topClassifyListView.addType(typeName, typeId);
+//        }
+//        onAddChildTypeFinished : {
+//            childClassifyListView.addType(typeName, typeId);
+//        }
+//    }
 
-    onTypeValueChanged: {
-        typeManager.initData();
-    }
+//    onTypeValueChanged: {
+//        typeManager.initData();
+//    }
 
-    Component.onCompleted: {
-        typeManager.initData();
-    }
+//    Component.onCompleted: {
+//        typeManager.initData();
+//    }
 
 }

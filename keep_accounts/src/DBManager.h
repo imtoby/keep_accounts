@@ -39,7 +39,7 @@ public slots:
     QList<TypeItem> getType(KA::InorOut inorOut,
                             const QString& parentId = QString());
 
-    QObjectList getTypeInfos(KA::InorOut inorOut,
+    QObjectList getTypeInfos(KA::InorOut inorOut, QObject *parent,
                              const QString &parentId = QString());
 
     int typeCount(const QString& parentId = QString()) const;

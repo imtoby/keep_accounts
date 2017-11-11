@@ -36,8 +36,9 @@ public:
     void remove(QObject* object);
     void remove(int index);
     void clear();
+    int count() const;
 
-    QObject * get(int index);
+    Q_INVOKABLE QObject * get(int index);
     QObjectList* getAll();
 
 private:
