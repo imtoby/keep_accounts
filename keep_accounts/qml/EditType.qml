@@ -78,7 +78,7 @@ Item {
             }
 
             onAccepted: {
-//                typeManager.addType(text, typeValue, Config.topTypeId);
+                infoManager.addType(text, inOrOutType, Config.topTypeId);
             }
 
             onTypeChanged: {
@@ -109,8 +109,8 @@ Item {
             opacity: 0
             inOrOutType: classifyEdit.inOrOutType
             onAccepted: {
-//                typeManager.addType(text, typeValue,
-//                                    topClassifyListView.typeUuid);
+                infoManager.addType(text, inOrOutType,
+                                    topClassifyListView.typeId);
             }
         }
     }

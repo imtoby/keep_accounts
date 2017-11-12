@@ -102,6 +102,7 @@ QHash<int, QByteArray> ObjectModel::roleNames() const
 void ObjectModel::insert(int index, QObject *object)
 {
     Q_D(ObjectModel);
+    qDebug() << __FUNCTION__;
     if (index >= 0  && index < d->objectList.size()) {
         d->mutex->lock();
         beginInsertRows(QModelIndex(), index, index);
@@ -114,6 +115,7 @@ void ObjectModel::insert(int index, QObject *object)
 void ObjectModel::append(QObject *object)
 {
     Q_D(ObjectModel);
+    qDebug() << __FUNCTION__;
     insert(d->objectList.size(), object);
 }
 

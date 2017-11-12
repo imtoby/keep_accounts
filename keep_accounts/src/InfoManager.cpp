@@ -1,8 +1,11 @@
 #include "InfoManager.h"
 #include "DBManager.h"
 #include "TypeInfo.h"
+#include "ZUuid.h"
+#include "base/kglobal.h"
 
 #include <QDebug>
+#include <QDateTime>
 
 class InfoManagerPrivate
 {
@@ -103,6 +106,42 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
+void InfoManager::addType(const QString &typeName, int type,
+                          const QString &parentId, const QString &icon)
+{
+    Q_D(InfoManager);
+    TypeInfo* info = new TypeInfo(this);
+
+    info->setTypeName(typeName);
+    info->setType(type);
+    info->setTypeId(KA_UUID->createUuidV5());
+    info->setIcon(icon);
+    info->setParentId(parentId);
+    info->setMillonSecs(QDateTime::currentMSecsSinceEpoch());
+    info->setIndex(QString::number(getCount(type, parentId)));
+
+    bool success = KA_DB->addTypeInfo(info);
+
+    qDebug() << __FUNCTION__ << typeName << type << parentId << success;
+
+    if (success) {
+        if (KA::OUT == type) {
+            if (parentId == KA::TOP_TYPE_ID) {
+                d->topOutModel->append(info);
+            } else {
+                d->childOutModel->append(info);
+            }
+        } else {
+            if (parentId == KA::TOP_TYPE_ID) {
+                d->topInModel->append(info);
+            } else {
+                d->childInModel->append(info);
+            }
+        }
+    }
+
+}
+
 void InfoManager::initTypeData()
 {
     Q_D(InfoManager);
@@ -115,6 +154,24 @@ void InfoManager::initTypeData()
     d->topOutModel->set(&infos);
 
     emit initTypeFinished();
+}
+
+int InfoManager::getCount(int type, const QString &parentId) const
+{
+    C_D(InfoManager);
+    if (KA::OUT == type) {
+        if (parentId == KA::TOP_TYPE_ID) {
+            return d->topOutModel->count();
+        } else {
+            return d->childOutModel->count();
+        }
+    } else {
+        if (parentId == KA::TOP_TYPE_ID) {
+            return d->topInModel->count();
+        } else {
+            return d->childInModel->count();
+        }
+    }
 }
 
 void InfoManagerPrivate::init()

@@ -23,11 +23,16 @@ public:
                                  const QString& parentId,
                                  const QString& typeName);
 
+    Q_INVOKABLE void addType(const QString& typeName, int type,
+                             const QString& parentId,
+                             const QString& icon = QString());
+
 signals:
     void initTypeFinished();
 
 private:
     void initTypeData();
+    int getCount(int type, const QString& parentId) const;
 
 private:
     QScopedPointer<InfoManagerPrivate> d_ptr;
