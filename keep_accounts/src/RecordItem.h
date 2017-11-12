@@ -70,7 +70,8 @@ public slots:
     void setIcon(const QString& icon);
 
 private:
-    RecordItemPrivate *d;
+    QScopedPointer<RecordItemPrivate> d_ptr;
+    Q_DECLARE_PRIVATE(RecordItem)
 };
 
 #endif // RECORDITEM_H_3E7BB3B8_B3E8_51AA_A1FF_BB92B02DA72E

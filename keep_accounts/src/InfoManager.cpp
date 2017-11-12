@@ -79,7 +79,7 @@ void InfoManager::setTypeName(int type, const QString &typeId,
                               const QString &typeName)
 {
     Q_D(InfoManager);
-    bool success = KA_DB->updateTypeData(typeId, KA::TYPE_NAME, typeName);
+    bool success = KA_DB->updateTypeInfo(typeId, KA::TYPE_NAME, typeName);
     if (success) {
         TypeInfo* info = NULL;
         if (KA::OUT == type) {

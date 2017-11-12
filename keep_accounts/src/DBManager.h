@@ -13,10 +13,10 @@
 
 #include "CSingleton.h"
 #include "ConfigInfo.h"
-#include "TypeItem.h"
 
 class QSqlDatabase;
 class RecordItem;
+class TypeInfo;
 
 class DBManager : public QObject
 {
@@ -32,16 +32,11 @@ public slots:
     void updateRecordData(const QString &millonSecs, const QString &key,
                           const QString &value);
 
-    bool addTypeData(const TypeItem &typeItem);
-    bool updateTypeData(const QString &typeId, const QString &key,
+    bool updateTypeInfo(const QString &typeId, const QString &key,
                         const QString &value);
-
-    QList<TypeItem> getType(KA::InorOut inorOut,
-                            const QString& parentId = QString());
-
     QObjectList getTypeInfos(KA::InorOut inorOut, QObject *parent,
                              const QString &parentId = QString());
-
+    bool addTypeInfo(const TypeInfo* const typeItem);
     int typeCount(const QString& parentId = QString()) const;
 
 private:

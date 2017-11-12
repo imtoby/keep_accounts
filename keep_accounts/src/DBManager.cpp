@@ -6,7 +6,6 @@
 #include <QSqlError>
 #include <QSqlQuery>
 
-#include "ConfigInfo.h"
 #include "RecordItem.h"
 #include "TypeInfo.h"
 
@@ -100,43 +99,7 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
     }
 }
 
-bool DBManager::addTypeData(const TypeItem &typeItem)
-{
-    qDebug() << __FUNCTION__;
-
-    bool addSuccess = false;
-    QSqlDatabase db = database();
-    if(db.open()){
-        QSqlQuery query(db);
-        bool check = query.prepare(KA::TABLE_TYPE_INSERT);
-
-        if(check){
-            query.bindValue(0, typeItem.typeId);
-            query.bindValue(1, typeItem.type);
-            query.bindValue(2, typeItem.typeName);
-            query.bindValue(3, typeItem.index);
-            query.bindValue(4, typeItem.millonSecs);
-            query.bindValue(5, typeItem.icon);
-            query.bindValue(6, typeItem.parentId);
-            query.exec();
-        }
-
-        if(query.lastError().isValid()){
-            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
-        } else {
-            addSuccess = true;
-        }
-
-        query.clear();
-        db.close();
-
-        return addSuccess;
-    }
-
-    return addSuccess;
-}
-
-bool DBManager::updateTypeData(const QString &typeId, const QString &key,
+bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
                                const QString &value)
 {
     qDebug() << __FUNCTION__;
@@ -178,59 +141,6 @@ bool DBManager::updateTypeData(const QString &typeId, const QString &key,
     }
 
     return success;
-}
-
-QList<TypeItem> DBManager::getType(KA::InorOut inorOut,
-                                   const QString &parentId)
-{
-    if (typeCount(parentId) > 0) {
-        QSqlDatabase db = database();
-        if(db.open()){
-            QSqlQuery query(db);
-            const QString sqlString = QString("select "
-                                              + KA::ID           + ","
-                                              + KA::TYPE         + ","
-                                              + KA::TYPE_NAME    + ","
-                                              + KA::INDEX        + ","
-                                              + KA::MILLON_SECS  + ","
-                                              + KA::ICON         + ","
-                                              + KA::PARENT_ID    +
-                                              " from "     + KA::DATABASE_TABLE_NAME_TYPE +
-                                              " where "    + KA::TYPE +
-                                              "='%1'"
-                                              " and "      + KA::PARENT_ID +
-                                              "='%2' order by " + KA::MILLON_SECS +
-                                              " ASC")
-                    .arg(QString::number(inorOut))
-                    .arg(parentId);
-
-            query.exec(sqlString);
-
-            QList<TypeItem> list;
-            while (query.next()) {
-                TypeItem item;
-                item.typeId =       query.value(0).toString();
-                item.type =         KA::InorOut(query.value(1).toInt());
-                item.typeName =     query.value(2).toString();
-                item.index =        query.value(3).toString();
-                item.millonSecs =   query.value(4).toULongLong();
-                item.icon =         query.value(5).toString();
-                item.parentId =     query.value(6).toString();
-                list.push_back(item);
-            }
-
-            if(query.lastError().isValid()){
-                qDebug() << __FUNCTION__ << query.lastError();
-            }
-            query.clear();
-            db.close();
-
-            qDebug() << __FUNCTION__ << "list.size: " << list.size();
-
-            return list;
-        }
-    }
-    return QList<TypeItem>();
 }
 
 QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
@@ -284,6 +194,42 @@ QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
         }
     }
     return QObjectList();
+}
+
+bool DBManager::addTypeInfo(const TypeInfo * const typeItem)
+{
+    qDebug() << __FUNCTION__;
+
+    bool addSuccess = false;
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+        bool check = query.prepare(KA::TABLE_TYPE_INSERT);
+
+        if(check){
+            query.bindValue(0, typeItem->typeId());
+            query.bindValue(1, typeItem->type());
+            query.bindValue(2, typeItem->typeName());
+            query.bindValue(3, typeItem->index());
+            query.bindValue(4, typeItem->millonSecs());
+            query.bindValue(5, typeItem->icon());
+            query.bindValue(6, typeItem->parentId());
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+        } else {
+            addSuccess = true;
+        }
+
+        query.clear();
+        db.close();
+
+        return addSuccess;
+    }
+
+    return addSuccess;
 }
 
 int DBManager::typeCount(const QString &parentId) const
