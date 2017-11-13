@@ -124,19 +124,26 @@ void InfoManager::addType(const QString &typeName, int type,
 
     qDebug() << __FUNCTION__ << typeName << type << parentId << success;
 
+    TypeModel * typeModel = NULL;
+
     if (success) {
         if (KA::OUT == type) {
             if (parentId == KA::TOP_TYPE_ID) {
-                d->topOutModel->append(info);
+                typeModel = d->topOutModel;
             } else {
-                d->childOutModel->append(info);
+                typeModel = d->childOutModel;
             }
         } else {
             if (parentId == KA::TOP_TYPE_ID) {
-                d->topInModel->append(info);
+                typeModel = d->topInModel;
             } else {
-                d->childInModel->append(info);
+                typeModel = d->childInModel;
             }
+        }
+
+        if (NULL != typeModel) {
+            typeModel->append(info);
+            emit addTypeFinished(type, parentId, typeModel->count());
         }
     }
 

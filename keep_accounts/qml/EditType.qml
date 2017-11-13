@@ -129,6 +129,14 @@ Item {
                                                      topClassifyListView.typeId) })
 
         }
+
+        onAddTypeFinished : {
+            if (Config.topTypeId == parentId) {
+                topClassifyListView.currentIndex = size - 1;
+            } else {
+                childClassifyListView.currentIndex = size - 1;
+            }
+        }
     }
 
     Component.onCompleted: {

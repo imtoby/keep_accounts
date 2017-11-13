@@ -29,6 +29,7 @@ public:
 
 signals:
     void initTypeFinished();
+    void addTypeFinished(int type, const QString& parentId, int size);
 
 private:
     void initTypeData();
