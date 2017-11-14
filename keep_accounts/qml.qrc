@@ -17,5 +17,7 @@
         <file>qml/MonthView.qml</file>
         <file>qml/Tools/KButton.qml</file>
         <file>qml/EditType.qml</file>
+        <file>qml/Dialog/KBaseDialog.qml</file>
+        <file>qml/Dialog/KDialog.qml</file>
     </qresource>
 </RCC>

@@ -2,6 +2,7 @@ import QtQuick 2.3
 import "Config"
 
 Item {
+    id: rootPage
 
 //    Histogram {
 //        model: 31

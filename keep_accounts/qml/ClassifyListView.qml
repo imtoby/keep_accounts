@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "Config"
 import "Tools"
+import "Dialog"
 
 ListView{
     id: topClassifyView
@@ -101,25 +102,28 @@ ListView{
             color: Config.balanceColor
             text: topClassifyView.currentItem.typeName
 
-            onEditingFinished: {
-                console.log(tag,"onAccepted current text: ", text)
-                if (text.length > 0) {
-                    console.log(tag,"accept edit");
-                    infoManager.setTypeName(inOrOutType, typeId, parentId, text);
+            property string sourceText: text
+            property int sourceIndex: currentIndex
+
+            onFocusChanged: {
+                if (focus) {
+                    sourceText = text
+                    sourceIndex = currentIndex
                 }
             }
-        }
 
-        Keys.onReleased: {
-            if(event.key === Qt.Key_Return || event.key === Qt.Key_Enter){
-                typeEditInput.focus = false
-
-                if(typeEditInput.length === 0){
-                    if(typeChildrenCount > 0){
-                        console.log(tag,"typeChildrenCount: ", typeChildrenCount)
-                    }else{
-                        console.log(tag,"to do show item dialog")
+            onEditingFinished: {
+                if (text.length > 0) {
+                    focus = false
+                    if (sourceText !== text) {
+                        console.log(tag,"accept edit");
+                        infoManager.setTypeName(inOrOutType, typeId,
+                                                parentId, text);
                     }
+                } else {
+                    console.log(tag,"sourceIndex: ", sourceIndex);
+                    dialog.askedIndex = sourceIndex
+                    dialog.open()
                 }
             }
         }
@@ -325,5 +329,16 @@ ListView{
     }
 
     highlightFollowsCurrentItem: true
+
+    KDialog {
+        id: dialog
+        parent: rootPage
+        message: qsTr("清空文字内容将会删除当前类别，确定要删除它吗？")
+
+        property int askedIndex: -1
+
+        onAccepted: {
+        }
+    }
 }
 
