@@ -37,6 +37,9 @@ InfoManager::InfoManager(QObject *parent)
 {
     Q_D(InfoManager);
     d->init();
+
+    connect(this, &InfoManager::addType, this, &InfoManager::doAddType);
+    connect(this, &InfoManager::deleteType, this, &InfoManager::doDeleteType);
 }
 
 InfoManager::~InfoManager()
@@ -106,7 +109,7 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
-void InfoManager::addType(const QString &typeName, int type,
+void InfoManager::doAddType(const QString &typeName, int type,
                           const QString &parentId, const QString &icon)
 {
     Q_D(InfoManager);
@@ -124,9 +127,9 @@ void InfoManager::addType(const QString &typeName, int type,
 
     qDebug() << __FUNCTION__ << typeName << type << parentId << success;
 
-    TypeModel * typeModel = NULL;
-
     if (success) {
+        TypeModel * typeModel = NULL;
+
         if (KA::OUT == type) {
             if (parentId == KA::TOP_TYPE_ID) {
                 typeModel = d->topOutModel;
@@ -147,6 +150,33 @@ void InfoManager::addType(const QString &typeName, int type,
         }
     }
 
+}
+
+void InfoManager::doDeleteType(int index, int type, const QString &typeId,
+                               const QString &parentId)
+{
+    Q_D(InfoManager);
+    bool success = KA_DB->deleteTypeInfo(typeId);
+    if (success) {
+        TypeModel * typeModel = NULL;
+        if (KA::OUT == type) {
+            if (parentId == KA::TOP_TYPE_ID) {
+                typeModel = d->topOutModel;
+            } else {
+                typeModel = d->childOutModel;
+            }
+        } else {
+            if (parentId == KA::TOP_TYPE_ID) {
+                typeModel = d->topInModel;
+            } else {
+                typeModel = d->childInModel;
+            }
+        }
+        if (NULL != typeModel) {
+            typeModel->remove(index);
+            emit deleteTypeFinished();
+        }
+    }
 }
 
 void InfoManager::initTypeData()

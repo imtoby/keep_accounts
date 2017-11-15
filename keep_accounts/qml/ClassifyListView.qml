@@ -49,6 +49,9 @@ ListView{
         height: 40
         enabled: currentIndex !== index
 
+        readonly property string typeId: model.modelData.typeId
+        readonly property string type: model.modelData.type
+        readonly property string parentId: model.modelData.parentId
         readonly property string typeName: model.modelData.typeName
 
         Text {
@@ -103,12 +106,16 @@ ListView{
             text: topClassifyView.currentItem.typeName
 
             property string sourceText: text
-            property int sourceIndex: currentIndex
 
             onFocusChanged: {
                 if (focus) {
                     sourceText = text
-                    sourceIndex = currentIndex
+                    dialog.currentEditIndex = currentIndex
+                    dialog.currentEditType = topClassifyView.currentItem.type
+                    dialog.currentEditTypeId
+                            = topClassifyView.currentItem.typeId
+                    dialog.currentEditParentId
+                            = topClassifyView.currentItem.parentId
                 }
             }
 
@@ -121,8 +128,6 @@ ListView{
                                                 parentId, text);
                     }
                 } else {
-                    console.log(tag,"sourceIndex: ", sourceIndex);
-                    dialog.askedIndex = sourceIndex
                     dialog.open()
                 }
             }
@@ -335,10 +340,16 @@ ListView{
         parent: rootPage
         message: qsTr("清空文字内容将会删除当前类别，确定要删除它吗？")
 
-        property int askedIndex: -1
+        property int currentEditIndex: -1
+        property int currentEditType: Config.out_type
+        property string currentEditTypeId: ""
+        property string currentEditParentId: ""
 
         onAccepted: {
+//            infoManager.deleteType(currentEditIndex, currentEditType,
+//                                   currentEditTypeId, currentEditParentId)
         }
+
     }
 }
 

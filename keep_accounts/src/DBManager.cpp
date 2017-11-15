@@ -232,6 +232,41 @@ bool DBManager::addTypeInfo(const TypeInfo * const typeItem)
     return addSuccess;
 }
 
+bool DBManager::deleteTypeInfo(const QString &typeId)
+{
+    qDebug() << __FUNCTION__ << typeId;
+
+    bool success = false;
+
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+
+        const QString table_type_delete("delete from "
+                                        + KA::DATABASE_TABLE_NAME_TYPE
+                                        + " where " + KA::ID + "=?");
+
+        bool check = query.prepare(table_type_delete);
+
+        if(check){
+            query.bindValue(0, typeId);
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        } else {
+            success = true;
+        }
+
+        query.clear();
+        db.close();
+        return success;
+    }
+
+    return success;
+}
+
 int DBManager::typeCount(const QString &parentId) const
 {
     qDebug() << __FUNCTION__;
