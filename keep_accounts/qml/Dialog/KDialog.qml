@@ -90,5 +90,13 @@ KBaseDialog {
                 accepted()
             }
         }
+
+//        Timer {
+//            id: delayAcceptedTimer
+//            interval: 300
+//            onTriggered: {
+//                accepted()
+//            }
+//        }
     }
 }

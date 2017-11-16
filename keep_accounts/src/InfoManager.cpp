@@ -6,16 +6,39 @@
 
 #include <QDebug>
 #include <QDateTime>
+#include <QThread>
+
+namespace {
+
+TypeModel* TopInModel       = NULL;
+TypeModel* ChildInModel     = NULL;
+TypeModel* TopOutModel      = NULL;
+TypeModel* ChildOutModel    = NULL;
+
+int GetCount(int type, const QString &parentId)
+{
+    if (KA::OUT == type) {
+        if (parentId == KA::TOP_TYPE_ID) {
+            return TopOutModel->count();
+        } else {
+            return ChildOutModel->count();
+        }
+    } else {
+        if (parentId == KA::TOP_TYPE_ID) {
+            return TopInModel->count();
+        } else {
+            return ChildInModel->count();
+        }
+    }
+}
+}
 
 class InfoManagerPrivate
 {
 public:
     InfoManagerPrivate(InfoManager *parent)
         : q_ptr(parent)
-        , topInModel(NULL)
-        , childInModel(NULL)
-        , topOutModel(NULL)
-        , childOutModel(NULL)
+        , worker(NULL)
     {}
 
     void init();
@@ -25,10 +48,8 @@ private:
     InfoManager * const q_ptr;
     Q_DECLARE_PUBLIC(InfoManager)
 
-    TypeModel* topInModel;
-    TypeModel* childInModel;
-    TypeModel* topOutModel;
-    TypeModel* childOutModel;
+    QThread workerThread;
+    Worker *worker;
 };
 
 InfoManager::InfoManager(QObject *parent)
@@ -38,14 +59,27 @@ InfoManager::InfoManager(QObject *parent)
     Q_D(InfoManager);
     d->init();
 
+    d->worker->moveToThread(&d->workerThread);
+    connect(&d->workerThread, &QThread::finished, d->worker,
+            &QObject::deleteLater);
     connect(this, &InfoManager::addType, this, &InfoManager::doAddType);
-    connect(this, &InfoManager::deleteType, this, &InfoManager::doDeleteType);
+    connect(d->worker, &Worker::addType, d->worker, &Worker::doAddType);
+    connect(d->worker, &Worker::addTypeFinished, this,
+            &InfoManager::doAddTypeFinished);
+
+    connect(this, &InfoManager::deleteType, d->worker, &Worker::doDeleteType);
+    connect(d->worker, &Worker::deleteTypeFinished,
+            this, &InfoManager::doDeleteTypeFinished);
+
+    d->workerThread.start();
 }
 
 InfoManager::~InfoManager()
 {
     Q_D(InfoManager);
     d->uninit();
+    d->workerThread.quit();
+    d->workerThread.wait();
 }
 
 void InfoManager::initData()
@@ -55,50 +89,47 @@ void InfoManager::initData()
 
 TypeModel *InfoManager::typeModel(int type, const QString& parentId)
 {
-    Q_D(InfoManager);
-
     if (KA::OUT == type) {
         if (parentId == KA::TOP_TYPE_ID) {
-            return d->topOutModel;
+            return TopOutModel;
         } else {
             QObjectList infos = KA_DB->getTypeInfos(KA::OUT, this, parentId);
-            d->childOutModel->clear();
-            d->childOutModel->set(&infos);
-            return d->childOutModel;
+            ChildOutModel->clear();
+            ChildOutModel->set(&infos);
+            return ChildOutModel;
         }
     } else {
         if (parentId == KA::TOP_TYPE_ID) {
-            return d->topInModel;
+            return TopInModel;
         } else {
             QObjectList infos = KA_DB->getTypeInfos(KA::IN, this, parentId);
-            d->childInModel->clear();
-            d->childInModel->set(&infos);
-            return d->childInModel;
+            ChildInModel->clear();
+            ChildInModel->set(&infos);
+            return ChildInModel;
         }
     }
 
-    return d->topOutModel;
+    return TopOutModel;
 }
 
 void InfoManager::setTypeName(int type, const QString &typeId,
                               const QString &parentId,
                               const QString &typeName)
 {
-    Q_D(InfoManager);
     bool success = KA_DB->updateTypeInfo(typeId, KA::TYPE_NAME, typeName);
     if (success) {
         TypeInfo* info = NULL;
         if (KA::OUT == type) {
             if (parentId == KA::TOP_TYPE_ID) {
-                info = d->topOutModel->getTypeInfoByTypeId(typeId);
+                info = TopOutModel->getTypeInfoByTypeId(typeId);
             } else {
-                info = d->childOutModel->getTypeInfoByTypeId(typeId);
+                info = ChildOutModel->getTypeInfoByTypeId(typeId);
             }
         } else {
             if (parentId == KA::TOP_TYPE_ID) {
-                info = d->topInModel->getTypeInfoByTypeId(typeId);
+                info = TopInModel->getTypeInfoByTypeId(typeId);
             } else {
-                info = d->childInModel->getTypeInfoByTypeId(typeId);
+                info = ChildInModel->getTypeInfoByTypeId(typeId);
             }
         }
         if (NULL != info) {
@@ -109,141 +140,144 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
+void InfoManager::initTypeData()
+{
+    QObjectList infos = KA_DB->getTypeInfos(KA::IN, this, KA::TOP_TYPE_ID);
+    TopInModel->clear();
+    TopInModel->set(&infos);
+
+    infos = KA_DB->getTypeInfos(KA::OUT, this, KA::TOP_TYPE_ID);
+    TopOutModel->clear();
+    TopOutModel->set(&infos);
+
+    emit initTypeFinished();
+}
+
 void InfoManager::doAddType(const QString &typeName, int type,
                           const QString &parentId, const QString &icon)
 {
     Q_D(InfoManager);
     TypeInfo* info = new TypeInfo(this);
+    emit d->worker->addType(info, typeName, type, parentId, icon);
+}
 
+void InfoManager::doAddTypeFinished(TypeInfo *info, int type,
+                                    const QString &parentId)
+{
+    TypeModel * typeModel = NULL;
+
+    if (KA::OUT == type) {
+        if (parentId == KA::TOP_TYPE_ID) {
+            typeModel = TopOutModel;
+        } else {
+            typeModel = ChildOutModel;
+        }
+    } else {
+        if (parentId == KA::TOP_TYPE_ID) {
+            typeModel = TopInModel;
+        } else {
+            typeModel = ChildInModel;
+        }
+    }
+
+    if (NULL != typeModel) {
+        typeModel->append(info);
+
+        emit addTypeFinished(type, parentId, typeModel->count());
+    }
+}
+
+void InfoManager::doDeleteTypeFinished(int index, int type,
+                                       const QString &typeId,
+                                       const QString &parentId)
+{
+    Q_UNUSED(typeId);
+    TypeModel * typeModel = NULL;
+    if (KA::OUT == type) {
+        if (parentId == KA::TOP_TYPE_ID) {
+            typeModel = TopOutModel;
+        } else {
+            typeModel = ChildOutModel;
+        }
+    } else {
+        if (parentId == KA::TOP_TYPE_ID) {
+            typeModel = TopInModel;
+        } else {
+            typeModel = ChildInModel;
+        }
+    }
+    if (NULL != typeModel) {
+        typeModel->remove(index);
+        emit deleteTypeFinished();
+    }
+}
+
+
+void InfoManagerPrivate::init()
+{
+    Q_Q(InfoManager);
+    if (TopInModel == NULL) {
+        TopInModel = new TypeModel(q);
+    }
+    if (ChildInModel == NULL) {
+        ChildInModel = new TypeModel(q);
+    }
+    if (TopOutModel == NULL) {
+        TopOutModel = new TypeModel(q);
+    }
+    if (ChildOutModel == NULL) {
+        ChildOutModel = new TypeModel(q);
+    }
+    if (worker == NULL) {
+        worker = new Worker;
+    }
+}
+
+void InfoManagerPrivate::uninit()
+{
+    if (TopInModel) {
+        TopInModel->deleteLater();
+        TopInModel = NULL;
+    }
+    if (ChildInModel) {
+        ChildInModel->deleteLater();
+        ChildInModel = NULL;
+    }
+    if (TopOutModel) {
+        TopOutModel->deleteLater();
+        TopOutModel = NULL;
+    }
+    if (ChildOutModel) {
+        ChildOutModel->deleteLater();
+        ChildOutModel = NULL;
+    }
+}
+
+void Worker::doAddType(TypeInfo* info, const QString &typeName, int type,
+                       const QString &parentId, const QString &icon)
+{
     info->setTypeName(typeName);
     info->setType(type);
     info->setTypeId(KA_UUID->createUuidV5());
     info->setIcon(icon);
     info->setParentId(parentId);
     info->setMillonSecs(QDateTime::currentMSecsSinceEpoch());
-    info->setIndex(QString::number(getCount(type, parentId)));
+    info->setIndex(QString::number(GetCount(type, parentId)));
 
     bool success = KA_DB->addTypeInfo(info);
 
     qDebug() << __FUNCTION__ << typeName << type << parentId << success;
 
     if (success) {
-        TypeModel * typeModel = NULL;
-
-        if (KA::OUT == type) {
-            if (parentId == KA::TOP_TYPE_ID) {
-                typeModel = d->topOutModel;
-            } else {
-                typeModel = d->childOutModel;
-            }
-        } else {
-            if (parentId == KA::TOP_TYPE_ID) {
-                typeModel = d->topInModel;
-            } else {
-                typeModel = d->childInModel;
-            }
-        }
-
-        if (NULL != typeModel) {
-            typeModel->append(info);
-            emit addTypeFinished(type, parentId, typeModel->count());
-        }
+        emit addTypeFinished(info, type, parentId);
     }
-
 }
 
-void InfoManager::doDeleteType(int index, int type, const QString &typeId,
-                               const QString &parentId)
+void Worker::doDeleteType(int index, int type, const QString &typeId,
+                          const QString &parentId)
 {
-    Q_D(InfoManager);
     bool success = KA_DB->deleteTypeInfo(typeId);
     if (success) {
-        TypeModel * typeModel = NULL;
-        if (KA::OUT == type) {
-            if (parentId == KA::TOP_TYPE_ID) {
-                typeModel = d->topOutModel;
-            } else {
-                typeModel = d->childOutModel;
-            }
-        } else {
-            if (parentId == KA::TOP_TYPE_ID) {
-                typeModel = d->topInModel;
-            } else {
-                typeModel = d->childInModel;
-            }
-        }
-        if (NULL != typeModel) {
-            typeModel->remove(index);
-            emit deleteTypeFinished();
-        }
-    }
-}
-
-void InfoManager::initTypeData()
-{
-    Q_D(InfoManager);
-    QObjectList infos = KA_DB->getTypeInfos(KA::IN, this, KA::TOP_TYPE_ID);
-    d->topInModel->clear();
-    d->topInModel->set(&infos);
-
-    infos = KA_DB->getTypeInfos(KA::OUT, this, KA::TOP_TYPE_ID);
-    d->topOutModel->clear();
-    d->topOutModel->set(&infos);
-
-    emit initTypeFinished();
-}
-
-int InfoManager::getCount(int type, const QString &parentId) const
-{
-    C_D(InfoManager);
-    if (KA::OUT == type) {
-        if (parentId == KA::TOP_TYPE_ID) {
-            return d->topOutModel->count();
-        } else {
-            return d->childOutModel->count();
-        }
-    } else {
-        if (parentId == KA::TOP_TYPE_ID) {
-            return d->topInModel->count();
-        } else {
-            return d->childInModel->count();
-        }
-    }
-}
-
-void InfoManagerPrivate::init()
-{
-    Q_Q(InfoManager);
-    if (topInModel == NULL) {
-        topInModel = new TypeModel(q);
-    }
-    if (childInModel == NULL) {
-        childInModel = new TypeModel(q);
-    }
-    if (topOutModel == NULL) {
-        topOutModel = new TypeModel(q);
-    }
-    if (childOutModel == NULL) {
-        childOutModel = new TypeModel(q);
-    }
-}
-
-void InfoManagerPrivate::uninit()
-{
-    if (topInModel) {
-        topInModel->deleteLater();
-        topInModel = NULL;
-    }
-    if (childInModel) {
-        childInModel->deleteLater();
-        childInModel = NULL;
-    }
-    if (topOutModel) {
-        topOutModel->deleteLater();
-        topOutModel = NULL;
-    }
-    if (childOutModel) {
-        childOutModel->deleteLater();
-        childOutModel = NULL;
+        emit deleteTypeFinished(index, type, typeId, parentId);
     }
 }

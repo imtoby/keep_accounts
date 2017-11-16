@@ -78,7 +78,7 @@ Item {
             }
 
             onAccepted: {
-                infoManager.addType(text, inOrOutType, Config.topTypeId);
+                delayAddTimer.startTimer(text, inOrOutType, Config.topTypeId);
             }
 
             onTypeChanged: {
@@ -109,9 +109,28 @@ Item {
             opacity: 0
             inOrOutType: classifyEdit.inOrOutType
             onAccepted: {
-                infoManager.addType(text, inOrOutType,
-                                    topClassifyListView.typeId);
+                delayAddTimer.startTimer(text, inOrOutType,
+                                         topClassifyListView.typeId);
             }
+        }
+    }
+
+    Timer {
+        id: delayAddTimer
+        property string __name: ""
+        property int __type: inOrOutType
+        property string __parentId: ""
+
+        function startTimer(name, type, parentId) {
+            __name = name
+            __type = type
+            __parentId = parentId
+            start()
+        }
+
+        interval: 400
+        onTriggered: {
+            infoManager.addType(__name, __type, __parentId);
         }
     }
 

@@ -8,6 +8,27 @@
 
 class InfoManagerPrivate;
 
+class Worker : public QObject
+{
+    Q_OBJECT
+
+public slots:
+    void doAddType(TypeInfo* info, const QString& typeName,
+                   int type, const QString& parentId,
+                   const QString& icon = QString());
+    void doDeleteType(int index, int type, const QString& typeId,
+                      const QString& parentId);
+
+signals:
+    void addType(TypeInfo* info, const QString& typeName,
+                 int type, const QString& parentId,
+                 const QString& icon = QString());
+    void addTypeFinished(TypeInfo* info, int type,
+                         const QString& parentId);
+    void deleteTypeFinished(int index, int type, const QString& typeId,
+                            const QString& parentId);
+};
+
 class InfoManager : public QObject
 {
     Q_OBJECT
@@ -29,16 +50,17 @@ signals:
                  const QString& icon = QString());
     void addTypeFinished(int type, const QString& parentId, int size);
     void deleteType(int index, int type, const QString& typeId,
-                                    const QString& parentId);
+                    const QString& parentId);
     void deleteTypeFinished();
 
-private:
+private slots:
     void initTypeData();
-    int getCount(int type, const QString& parentId) const;
     void doAddType(const QString& typeName, int type, const QString& parentId,
                    const QString& icon = QString());
-    void doDeleteType(int index, int type, const QString& typeId,
-                      const QString& parentId);
+    void doAddTypeFinished(TypeInfo* info, int type,
+                           const QString& parentId);
+    void doDeleteTypeFinished(int index, int type, const QString& typeId,
+                              const QString& parentId);
 
 private:
     QScopedPointer<InfoManagerPrivate> d_ptr;

@@ -120,6 +120,7 @@ ListView{
             }
 
             onEditingFinished: {
+                console.log(tag,"onEditingFinished");
                 if (text.length > 0) {
                     focus = false
                     if (sourceText !== text) {
@@ -127,7 +128,7 @@ ListView{
                         infoManager.setTypeName(inOrOutType, typeId,
                                                 parentId, text);
                     }
-                } else {
+                } else if ((text.length == 0) && focus) {
                     dialog.open()
                 }
             }
@@ -346,10 +347,17 @@ ListView{
         property string currentEditParentId: ""
 
         onAccepted: {
-//            infoManager.deleteType(currentEditIndex, currentEditType,
-//                                   currentEditTypeId, currentEditParentId)
+            infoManager.deleteType(currentEditIndex, currentEditType,
+                                   currentEditTypeId, currentEditParentId)
         }
 
+    }
+
+    Connections {
+        target: infoManager
+        onDeleteTypeFinished: {
+            dialog.close()
+        }
     }
 }
 
