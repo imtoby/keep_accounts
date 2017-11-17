@@ -133,6 +133,37 @@ ListView{
                 }
             }
         }
+
+        KDialog {
+            id: dialog
+            parent: rootPage
+            message: qsTr("清空文字内容将会删除当前类别<\ br>" +
+                          "（包括其子类别），<\ br>确定要删除它吗？")
+
+            property int currentEditIndex: -1
+            property int currentEditType: Config.out_type
+            property string currentEditTypeId: ""
+            property string currentEditParentId: ""
+
+            onAccepted: {
+                infoManager.deleteType(currentEditIndex, currentEditType,
+                                       currentEditTypeId, currentEditParentId)
+            }
+
+            onRejected: {
+                typeEditInput.text = Qt.binding(function(){
+                    return topClassifyView.currentItem.typeName})
+                typeEditInput.focus = false
+            }
+
+        }
+
+        Connections {
+            target: infoManager
+            onDeleteTypeFinished: {
+                dialog.close()
+            }
+        }
     }
 
     footer: Item {
@@ -335,29 +366,5 @@ ListView{
     }
 
     highlightFollowsCurrentItem: true
-
-    KDialog {
-        id: dialog
-        parent: rootPage
-        message: qsTr("清空文字内容将会删除当前类别，确定要删除它吗？")
-
-        property int currentEditIndex: -1
-        property int currentEditType: Config.out_type
-        property string currentEditTypeId: ""
-        property string currentEditParentId: ""
-
-        onAccepted: {
-            infoManager.deleteType(currentEditIndex, currentEditType,
-                                   currentEditTypeId, currentEditParentId)
-        }
-
-    }
-
-    Connections {
-        target: infoManager
-        onDeleteTypeFinished: {
-            dialog.close()
-        }
-    }
 }
 

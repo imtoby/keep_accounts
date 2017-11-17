@@ -232,7 +232,7 @@ bool DBManager::addTypeInfo(const TypeInfo * const typeItem)
     return addSuccess;
 }
 
-bool DBManager::deleteTypeInfo(const QString &typeId)
+bool DBManager::deleteTypeInfoByTypeId(const QString &typeId)
 {
     qDebug() << __FUNCTION__ << typeId;
 
@@ -250,6 +250,41 @@ bool DBManager::deleteTypeInfo(const QString &typeId)
 
         if(check){
             query.bindValue(0, typeId);
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        } else {
+            success = true;
+        }
+
+        query.clear();
+        db.close();
+        return success;
+    }
+
+    return success;
+}
+
+bool DBManager::deleteTypeInfoByParentId(const QString &parentId)
+{
+    qDebug() << __FUNCTION__ << parentId;
+
+    bool success = false;
+
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+
+        const QString table_type_delete("delete from "
+                                        + KA::DATABASE_TABLE_NAME_TYPE
+                                        + " where " + KA::PARENT_ID + "=?");
+
+        bool check = query.prepare(table_type_delete);
+
+        if(check){
+            query.bindValue(0, parentId);
             query.exec();
         }
 

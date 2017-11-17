@@ -128,7 +128,7 @@ Item {
             start()
         }
 
-        interval: 400
+        interval: 450
         onTriggered: {
             infoManager.addType(__name, __type, __parentId);
         }

@@ -37,7 +37,8 @@ public slots:
     QObjectList getTypeInfos(KA::InorOut inorOut, QObject *parent,
                              const QString &parentId = QString());
     bool addTypeInfo(const TypeInfo* const typeItem);
-    bool deleteTypeInfo(const QString &typeId);
+    bool deleteTypeInfoByTypeId(const QString &typeId);
+    bool deleteTypeInfoByParentId(const QString &parentId);
     int typeCount(const QString& parentId = QString()) const;
 
 private:

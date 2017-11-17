@@ -276,7 +276,10 @@ void Worker::doAddType(TypeInfo* info, const QString &typeName, int type,
 void Worker::doDeleteType(int index, int type, const QString &typeId,
                           const QString &parentId)
 {
-    bool success = KA_DB->deleteTypeInfo(typeId);
+    bool success = KA_DB->deleteTypeInfoByTypeId(typeId);
+    if (parentId == KA::TOP_TYPE_ID) {
+        success = KA_DB->deleteTypeInfoByParentId(typeId);
+    }
     if (success) {
         emit deleteTypeFinished(index, type, typeId, parentId);
     }
