@@ -30,8 +30,8 @@ Item {
         anchors.topMargin: typeContainer.height + Config.margin
         clip: true
 
-        ClassifyListView {
-            id: topClassifyListView
+        EditTypeView {
+            id: topView
 
             width: parent.width
             state: count > 0 ? "showChild" : ""
@@ -41,20 +41,20 @@ Item {
                 State {
                     name: "showChild"
                     PropertyChanges {
-                        target: topClassifyListView; width: parent.width/2
+                        target: topView; width: parent.width/2
                     }
                     PropertyChanges { target: divLine; opacity: 1 }
                     PropertyChanges {
-                        target: childClassifyListView; opacity: 1
+                        target: childView; opacity: 1
                     }
                 },State {
                     name: ""
                     PropertyChanges {
-                        target: topClassifyListView; width: parent.width
+                        target: topView; width: parent.width
                     }
                     PropertyChanges { target: divLine; opacity: 0 }
                     PropertyChanges {
-                        target: childClassifyListView; opacity: 0
+                        target: childView; opacity: 0
                     }
                 }
             ]
@@ -74,7 +74,7 @@ Item {
             property string lastTypeId: ""
 
             onHeaderTitleShown: {
-                childClassifyListView.hideHeaderTitle()
+                childView.hideHeaderTitle()
             }
 
             onAccepted: {
@@ -83,7 +83,7 @@ Item {
 
             onTypeChanged: {
                 if(lastTypeId !== typeId){
-                    childClassifyListView.currentIndex = 0
+                    childView.currentIndex = 0
                 }
 
                 lastTypeId = typeId
@@ -99,18 +99,18 @@ Item {
             opacity: 0
         }
 
-        ClassifyListView{
-            id: childClassifyListView
-            enabled: topClassifyListView.currentIndex > -1
+        EditTypeView {
+            id: childView
+            enabled: topView.currentIndex > -1
             headerTitle: qsTr("子项目")
             onHeaderTitleShown: {
-                topClassifyListView.hideHeaderTitle()
+                topView.hideHeaderTitle()
             }
             opacity: 0
             inOrOutType: classifyEdit.inOrOutType
             onAccepted: {
                 delayAddTimer.startTimer(text, inOrOutType,
-                                         topClassifyListView.typeId);
+                                         topView.typeId);
             }
         }
     }
@@ -138,22 +138,22 @@ Item {
         target: infoManager
         ignoreUnknownSignals: true
         onInitTypeFinished : {
-            topClassifyListView.listModel =
+            topView.listModel =
                     Qt.binding(function(){
                         return infoManager.typeModel(inOrOutType,
                                                      Config.topTypeId) })
-            childClassifyListView.listModel =
+            childView.listModel =
                     Qt.binding(function(){
                         return infoManager.typeModel(inOrOutType,
-                                                     topClassifyListView.typeId) })
+                                                     topView.typeId) })
 
         }
 
         onAddTypeFinished : {
             if (Config.topTypeId == parentId) {
-                topClassifyListView.currentIndex = size - 1;
+                topView.currentIndex = size - 1;
             } else {
-                childClassifyListView.currentIndex = size - 1;
+                childView.currentIndex = size - 1;
             }
         }
     }

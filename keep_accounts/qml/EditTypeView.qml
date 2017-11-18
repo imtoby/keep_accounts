@@ -4,7 +4,7 @@ import "Tools"
 import "Dialog"
 
 ListView{
-    id: topClassifyView
+    id: editView
     width: parent.width/2
     height: parent.height
     clip: true
@@ -45,7 +45,7 @@ ListView{
     model: listModel
 
     delegate: KButton {
-        width: topClassifyView.width
+        width: editView.width
         height: 40
         enabled: currentIndex !== index
 
@@ -63,7 +63,7 @@ ListView{
         }
 
         Rectangle{
-            width: topClassifyView.width - 2*Config.margin
+            width: editView.width - 2*Config.margin
             height: Config.lineWidth
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
@@ -77,9 +77,9 @@ ListView{
     }
 
     highlight: Item {
-        width: topClassifyView.width
+        width: editView.width
         height: 40
-        y: topClassifyView.currentItem.y
+        y: editView.currentItem.y
 
         Behavior on y {
             SpringAnimation {
@@ -91,31 +91,34 @@ ListView{
         Rectangle {
             anchors.fill: parent
             anchors.margins: 6
-            color: Config.lineColor
+            color: "#EEEEEE"
         }
 
         TextInput {
             id: typeEditInput
-            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: deleteBtn.left
+            anchors.bottom: parent.bottom
             clip: true
-            anchors.leftMargin: Config.margin*2
-            anchors.rightMargin: Config.margin*2
+            anchors.leftMargin: 2*Config.margin
+            anchors.rightMargin: 6
             horizontalAlignment: TextInput.AlignLeft
             verticalAlignment: TextInput.AlignVCenter
             color: Config.balanceColor
-            text: topClassifyView.currentItem.typeName
+            text: editView.currentItem.typeName
 
             property string sourceText: text
 
             onFocusChanged: {
                 if (focus) {
                     sourceText = text
-                    dialog.currentEditIndex = currentIndex
-                    dialog.currentEditType = topClassifyView.currentItem.type
-                    dialog.currentEditTypeId
-                            = topClassifyView.currentItem.typeId
-                    dialog.currentEditParentId
-                            = topClassifyView.currentItem.parentId
+                    deleteDialog.currentEditIndex = currentIndex
+                    deleteDialog.currentEditType = editView.currentItem.type
+                    deleteDialog.currentEditTypeId
+                            = editView.currentItem.typeId
+                    deleteDialog.currentEditParentId
+                            = editView.currentItem.parentId
                 }
             }
 
@@ -128,17 +131,16 @@ ListView{
                         infoManager.setTypeName(inOrOutType, typeId,
                                                 parentId, text);
                     }
-                } else if ((text.length == 0) && focus) {
-                    dialog.open()
                 }
             }
         }
 
         KDialog {
-            id: dialog
+            id: deleteDialog
             parent: rootPage
-            message: qsTr("清空文字内容将会删除当前类别<\ br>" +
-                          "（包括其子类别），<\ br>确定要删除它吗？")
+            message: qsTr(editView.currentItem.parentId === Config.topTypeId ?
+                              "删除当前类别也会删除其子类别，<\ br>确定要删除吗？" :
+                              "确定要删除当前类别吗？")
 
             property int currentEditIndex: -1
             property int currentEditType: Config.out_type
@@ -152,7 +154,7 @@ ListView{
 
             onRejected: {
                 typeEditInput.text = Qt.binding(function(){
-                    return topClassifyView.currentItem.typeName})
+                    return editView.currentItem.typeName})
                 typeEditInput.focus = false
             }
 
@@ -161,17 +163,37 @@ ListView{
         Connections {
             target: infoManager
             onDeleteTypeFinished: {
-                dialog.close()
+                deleteDialog.close()
+            }
+        }
+
+        KButton {
+            id: deleteBtn
+            width: parent.height
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+
+            Image {
+                width: 14
+                height: 14
+                sourceSize: Qt.size(140, 140)
+                source: "qrc:/res/delete.png"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            onClicked: {
+                deleteDialog.open()
             }
         }
     }
 
     footer: Item {
-        width: topClassifyView.width
+        width: editView.width
         height: Config.lineWidth
 
         Rectangle{
-            width: topClassifyView.width - 2*Config.margin
+            width: editView.width - 2*Config.margin
             height: Config.lineWidth
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
@@ -182,24 +204,24 @@ ListView{
 
     header: Item {
         id: topBtn
-        width: topClassifyView.width
+        width: editView.width
         height: 50
 
         function hide(){
             topBtn.state = ""
 
-            topClassifyView.model = Qt.binding(function(){return listModel})
+            editView.model = Qt.binding(function(){return listModel})
         }
 
         function show(){
             topBtn.state = "show"
 
-            topClassifyView.model = null
+            editView.model = null
         }
 
         KButton {
             id: topTxt
-            width: topClassifyView.width
+            width: editView.width
             height: 50
             Text {
                 id: topLabel
@@ -315,7 +337,7 @@ ListView{
                 name: "show"
                 PropertyChanges {
                     target: topBtn;
-                    height: topClassifyView.height
+                    height: editView.height
                 }
                 PropertyChanges {
                     target: topLine;

@@ -11,7 +11,6 @@
         <file>qml/Tools/KComboBox.qml</file>
         <file>qml/Tools/KMonthComboBox.qml</file>
         <file>qml/Tools/KYearComboBox.qml</file>
-        <file>qml/ClassifyListView.qml</file>
         <file>qml/EditDialog.qml</file>
         <file>qml/HeaderView.qml</file>
         <file>qml/MonthView.qml</file>
@@ -19,5 +18,6 @@
         <file>qml/EditType.qml</file>
         <file>qml/Dialog/KBaseDialog.qml</file>
         <file>qml/Dialog/KDialog.qml</file>
+        <file>qml/EditTypeView.qml</file>
     </qresource>
 </RCC>

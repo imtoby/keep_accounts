@@ -6,5 +6,6 @@
         <file>res/02.png</file>
         <file>res/03.jpg</file>
         <file>res/04.png</file>
+        <file>res/delete.png</file>
     </qresource>
 </RCC>
