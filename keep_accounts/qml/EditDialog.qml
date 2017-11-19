@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "Config"
 import "Tools"
+import "Dialog"
 
 MouseArea {
     id: editDialog
@@ -150,12 +151,12 @@ MouseArea {
                     anchors.leftMargin: Config.margin
                     anchors.rightMargin: Config.margin
                     onClicked: {
-                        clearInputFocus()
+                        selectTypeDialog.open()
                     }
 
                     Text{
                         anchors.fill: parent
-                        text: "取消"
+                        text: "分类"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         color: Config.newAccountColor
@@ -354,6 +355,10 @@ MouseArea {
         }else{
             hide()
         }
+    }
+
+    KSelectTypeDialog {
+        id: selectTypeDialog
     }
 
 }

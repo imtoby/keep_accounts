@@ -135,7 +135,7 @@ ListView{
             }
         }
 
-        KDialog {
+        KInfoDialog {
             id: deleteDialog
             parent: rootPage
             message: qsTr(editView.currentItem.parentId === Config.topTypeId ?

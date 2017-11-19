@@ -17,7 +17,8 @@
         <file>qml/Tools/KButton.qml</file>
         <file>qml/EditType.qml</file>
         <file>qml/Dialog/KBaseDialog.qml</file>
-        <file>qml/Dialog/KDialog.qml</file>
         <file>qml/EditTypeView.qml</file>
+        <file>qml/Dialog/KInfoDialog.qml</file>
+        <file>qml/Dialog/KSelectTypeDialog.qml</file>
     </qresource>
 </RCC>
