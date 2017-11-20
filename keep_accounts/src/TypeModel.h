@@ -17,6 +17,8 @@ public:
     int type() const;
     void setType(int type);
 
+    void appendList(QObjectList * objectList);
+
     TypeInfo* getTypeInfoByTypeId(const QString& typeId);
 
 signals:

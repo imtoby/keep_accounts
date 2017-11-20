@@ -9,6 +9,7 @@ KBaseDialog {
     property string title: qsTr("类别选择")
     property int dialogWidth: baseDialog.width / 2.0
     property int dialogHeight: dialogWidth * 0.8
+    property int inOrOutType: Config.out_type
 
     contextSourceComponent: Item {
         width: dialogWidth
@@ -42,20 +43,25 @@ KBaseDialog {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            anchors.margins: 20
+            clip: true
+            pressDelay: 100
 
-            model: 20
+            model: infoManager.selectTypeModel(inOrOutType)
 
             delegate: KButton {
-                width: contentTxt - (2 * Config.margin)
+                width: contentTxt.width
                 height: 40
                 Text {
                     anchors.fill: parent
-                    text: qsTr("取消")
+                    anchors.leftMargin: 20
+                    text: model.modelData.parentId === Config.topTypeId ?
+                              model.modelData.typeName :
+                              "--- " + model.modelData.typeName
                     verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
+                    horizontalAlignment: Text.AlignLeft
                 }
                 onClicked: {
+                    baseDialog.close()
                 }
             }
         }

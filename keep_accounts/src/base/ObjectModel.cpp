@@ -181,7 +181,6 @@ void ObjectModel::clear()
     if (d->objectList.size() > 0) {
         d->mutex->lock();
         beginResetModel();
-        qDeleteAll(d->objectList);
         d->objectList.clear();
         endResetModel();
         d->mutex->unlock();
@@ -227,7 +226,6 @@ void ObjectModelPrivate::init()
 
 void ObjectModelPrivate::uninit()
 {
-    qDeleteAll(objectList);
     objectList.clear();
     rolesNames.clear();
     if (mutex) {

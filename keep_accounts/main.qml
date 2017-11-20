@@ -13,4 +13,8 @@ Window {
     MainPage {
         anchors.fill: parent
     }
+
+    Component.onCompleted: {
+        infoManager.initData();
+    }
 }

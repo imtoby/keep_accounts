@@ -43,6 +43,13 @@ void TypeModel::setType(int type)
     }
 }
 
+void TypeModel::appendList(QObjectList *objectList)
+{
+    for (QObject* object : *objectList) {
+        append(object);
+    }
+}
+
 TypeInfo *TypeModel::getTypeInfoByTypeId(const QString &typeId)
 {
     foreach (QObject* object, *this->getAll()) {

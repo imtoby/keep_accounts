@@ -37,8 +37,11 @@ public:
     ~InfoManager();
 
     Q_INVOKABLE void initData();
-    Q_INVOKABLE TypeModel* typeModel(int type,
-                                     const QString& parentId = KA::TOP_TYPE_ID);
+    Q_INVOKABLE TypeModel* editTypeModel(int type,
+                                         const QString& parentId
+                                         = KA::TOP_TYPE_ID);
+
+    Q_INVOKABLE TypeModel* selectTypeModel(int type);
 
     Q_INVOKABLE void setTypeName(int type, const QString& typeId,
                                  const QString& parentId,

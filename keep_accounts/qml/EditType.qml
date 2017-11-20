@@ -140,12 +140,12 @@ Item {
         onInitTypeFinished : {
             topView.listModel =
                     Qt.binding(function(){
-                        return infoManager.typeModel(inOrOutType,
-                                                     Config.topTypeId) })
+                        return infoManager.editTypeModel(inOrOutType,
+                                                         Config.topTypeId) })
             childView.listModel =
                     Qt.binding(function(){
-                        return infoManager.typeModel(inOrOutType,
-                                                     topView.typeId) })
+                        return infoManager.editTypeModel(inOrOutType,
+                                                         topView.typeId) })
 
         }
 
