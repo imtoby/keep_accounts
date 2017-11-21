@@ -58,7 +58,7 @@ Item {
                     text: qsTr("2016-08-08")
                 }
                 Text {
-                    id: balanceTxt
+                    id: amountTxt
                     width: parent.width*2/5
                     height: parent.height
                     anchors.right: parent.right

@@ -11,6 +11,8 @@ KBaseDialog {
     property int dialogHeight: dialogWidth * 0.8
     property int inOrOutType: Config.out_type
 
+    signal clicked(string typeName, string typeId, string parentId)
+
     contextSourceComponent: Item {
         width: dialogWidth
         height: dialogHeight
@@ -56,11 +58,14 @@ KBaseDialog {
                     anchors.leftMargin: 20
                     text: model.modelData.parentId === Config.topTypeId ?
                               model.modelData.typeName :
-                              "--- " + model.modelData.typeName
+                              "  |-- " + model.modelData.typeName
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignLeft
                 }
                 onClicked: {
+                    baseDialog.clicked(model.modelData.typeName,
+                                       model.modelData.typeId,
+                                       model.modelData.parentId)
                     baseDialog.close()
                 }
             }

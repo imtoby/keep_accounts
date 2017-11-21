@@ -47,7 +47,12 @@ public:
                                  const QString& parentId,
                                  const QString& typeName);
 
+private:
+    // parentId could not equals KA::TOP_TYPE_ID
+    QString getParentTypeName(int type, const QString& parentId) const;
+
 signals:
+    // for type infos
     void initTypeFinished();
     void addType(const QString& typeName, int type, const QString& parentId,
                  const QString& icon = QString());
@@ -55,6 +60,13 @@ signals:
     void deleteType(int index, int type, const QString& typeId,
                     const QString& parentId);
     void deleteTypeFinished();
+
+    // for record items
+    void addRecord(int type, const QString& typeId, const QString& parentId
+                   // TODO
+
+                   , const QString& icon = QString()
+                   );
 
 private slots:
     void initTypeData();

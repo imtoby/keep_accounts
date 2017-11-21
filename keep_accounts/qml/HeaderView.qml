@@ -12,7 +12,7 @@ Item {
     }
     implicitHeight: Config.headHeight
 
-    property alias balance: balanceTotalObj.text
+    property alias amount: amountTotalObj.text
     property alias expenses: expensesTotalObj.text
     property alias income: incomeTotalObj.text
     property alias month: monthObj.text
@@ -137,7 +137,7 @@ Item {
 
             Rectangle{
                 anchors{
-                    right: balanceTotalObjBtn.left
+                    right: amountTotalObjBtn.left
                     verticalCenter: parent.verticalCenter
                 }
                 color: Config.lineColor
@@ -146,11 +146,11 @@ Item {
             }
 
             KButton{
-                id: balanceTotalObjBtn
+                id: amountTotalObjBtn
                 width: parent.width/3
                 height: parent.height
                 anchors.right: parent.right
-                onClicked: headerView.clicked(Config.indexBalancee)
+                onClicked: headerView.clicked(Config.indexAmount)
 
                 Text{
                     width: parent.width
@@ -158,18 +158,18 @@ Item {
                     text: "结余"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignBottom
-                    color: Config.balanceColor
+                    color: Config.amountColor
                 }
 
                 Text{
-                    id: balanceTotalObj
+                    id: amountTotalObj
                     width: parent.width
                     height: parent.height/2
                     anchors.bottom: parent.bottom
                     text: "0.00"
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignTop
-                    color: Config.balanceColor
+                    color: Config.amountColor
                 }
             }
 

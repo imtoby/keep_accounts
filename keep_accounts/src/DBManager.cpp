@@ -30,7 +30,7 @@ DBManager::~DBManager()
 {
 }
 
-void DBManager::addRecordData(const RecordItem &recordItem)
+void DBManager::addRecordData(const RecordItem* const recordItem)
 {
     qDebug() << __FUNCTION__;
 
@@ -40,17 +40,17 @@ void DBManager::addRecordData(const RecordItem &recordItem)
         bool check = query.prepare(KA::TABLE_RECORDS_INSERT);
 
         if(check){
-            query.bindValue(0, recordItem.millonSecs());
-            query.bindValue(1, recordItem.dateTime());
-            query.bindValue(2, recordItem.year());
-            query.bindValue(3, recordItem.month());
-            query.bindValue(4, recordItem.day());
-            query.bindValue(5, recordItem.type());
-            query.bindValue(6, recordItem.parentType());
-            query.bindValue(7, recordItem.childType());
-            query.bindValue(8, recordItem.amount());
-            query.bindValue(9, recordItem.note());
-            query.bindValue(10, recordItem.icon());
+            query.bindValue(0, recordItem->millonSecs());
+            query.bindValue(1, recordItem->dateTime());
+            query.bindValue(2, recordItem->year());
+            query.bindValue(3, recordItem->month());
+            query.bindValue(4, recordItem->day());
+            query.bindValue(5, recordItem->type());
+            query.bindValue(6, recordItem->parentType());
+            query.bindValue(7, recordItem->childType());
+            query.bindValue(8, recordItem->amount());
+            query.bindValue(9, recordItem->note());
+            query.bindValue(10, recordItem->icon());
             query.exec();
         }
 

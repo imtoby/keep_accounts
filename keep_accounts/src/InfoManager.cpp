@@ -123,7 +123,6 @@ TypeModel *InfoManager::selectTypeModel(int type)
 {
     Q_D(InfoManager);
     if (KA::OUT == type) {
-        qDebug() << "=============>>>>>>" << d->selectOutTypeModel->count();
         return d->selectOutTypeModel;
     } else {
         return d->selectInTypeModel;
@@ -158,6 +157,20 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
+QString InfoManager::getParentTypeName(int type, const QString &parentId) const
+{
+    TypeInfo* info = NULL;
+    if (KA::OUT == type) {
+        info = TopOutModel->getTypeInfoByTypeId(parentId);
+    } else {
+        info = TopInModel->getTypeInfoByTypeId(parentId);
+    }
+    if (NULL != info) {
+        return info->typeName();
+    }
+    return QString();
+}
+
 void InfoManager::initTypeData()
 {
     if (!INIT_TYPE_INFO_FINISHED) {
@@ -182,7 +195,7 @@ void InfoManager::initTypeData()
         for (int i=0; i<TopInModel->count(); ++i) {
             TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopInModel->get(i));
             d->selectInTypeModel->append(typeInfo);
-            QObjectList infos = KA_DB->getTypeInfos(KA::OUT, this,
+            QObjectList infos = KA_DB->getTypeInfos(KA::IN, this,
                                                     typeInfo->typeId());
             d->selectInTypeModel->appendList(&infos);
         }

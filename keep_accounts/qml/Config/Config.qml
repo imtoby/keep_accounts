@@ -13,14 +13,14 @@ QtObject{
 
     readonly property color expensesColor:      "#A60000"
     readonly property color incomeColor:        "#008500"
-    readonly property color balanceColor:       "#05296E"
+    readonly property color amountColor:        "#05296E"
     readonly property color backgroundColor:    "#CCCCCC"
     readonly property color newAccountColor:    "#FFAD00"
 
     ///////////////////// Button index ///////////////////////
     readonly property int indexIncome:      0x00
     readonly property int indexExpenses:    0x01
-    readonly property int indexBalancee:    0x02
+    readonly property int indexAmount:      0x02
     readonly property int indexMonth:       0x03
     readonly property int indexNewAccount:  0x04
     ///////////////////// Button index ///////////////////////

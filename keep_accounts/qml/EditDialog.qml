@@ -10,6 +10,9 @@ MouseArea {
 
     readonly property bool isExpenses: typeContainer.isExpensesType
 
+    readonly property int inOrOutType:
+        isExpenses ? Config.out_type : Config.in_type
+
     property alias dateText: dateTxt.text
 
     function show(){
@@ -22,7 +25,7 @@ MouseArea {
 
     function clearInputFocus(){
         remarkInput.focus = false
-        balanceInput.focus = false
+        amountInput.focus = false
     }
 
     states: [
@@ -97,20 +100,20 @@ MouseArea {
             }
 
             Item{
-                id: balanceContainer
+                id: amountContainer
                 width: parent.width
                 height: parent.height/7
                 anchors.top: typeContainer.bottom
 
                 TextInput{
-                    id: balanceInput
+                    id: amountInput
                     anchors.fill: parent
                     clip: true
                     anchors.leftMargin: 4*Config.margin
                     anchors.rightMargin: 4*Config.margin
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: TextInput.AlignVCenter
-                    color: Config.balanceColor
+                    color: Config.amountColor
                     font.pixelSize: 32
                     validator: RegExpValidator{
                         regExp: /^[1-9]\d{0,8}([.]\d{0,2})?$/
@@ -120,11 +123,11 @@ MouseArea {
                         id: placeholderTextComponent
                         anchors.fill: parent
                         anchors.leftMargin: 4
-                        opacity: !balanceInput.text.length && !balanceInput.activeFocus ? 1 : 0
-                        color: balanceInput.color
-                        font: balanceInput.font
-                        horizontalAlignment: balanceInput.horizontalAlignment
-                        verticalAlignment: balanceInput.verticalAlignment
+                        opacity: !amountInput.text.length && !amountInput.activeFocus ? 1 : 0
+                        color: amountInput.color
+                        font: amountInput.font
+                        horizontalAlignment: amountInput.horizontalAlignment
+                        verticalAlignment: amountInput.verticalAlignment
                         clip: true
                         text: "0"
                         Behavior on opacity { NumberAnimation { duration: 200 } }
@@ -144,7 +147,7 @@ MouseArea {
                 id: contentContainer
                 width: parent.width
                 height: parent.height/7
-                anchors.top: balanceContainer.bottom
+                anchors.top: amountContainer.bottom
 
                 KButton{
                     anchors.fill: parent
@@ -155,8 +158,12 @@ MouseArea {
                     }
 
                     Text{
+                        id: typeContent
+                        property string typeId: ""
+                        property string parentId: ""
+
                         anchors.fill: parent
-                        text: "分类"
+                        text: "分类" // TODO show last select type name
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         color: Config.newAccountColor
@@ -286,8 +293,13 @@ MouseArea {
                     anchors.right: parent.right
                     anchors.rightMargin: Config.margin
                     onClicked: {
-                        // todo
                         hide()
+
+                        // TODO save data
+//                        inOrOutType
+//                        amountInput.text
+//                        typeContent.typeId
+//                        typeContent.parentId
                     }
 
                     Text{
@@ -359,6 +371,12 @@ MouseArea {
 
     KSelectTypeDialog {
         id: selectTypeDialog
+        inOrOutType: editDialog.inOrOutType
+        onClicked: {
+            typeContent.text = typeName
+            typeContent.typeId = typeId
+            typeContent.parentId = parentId
+        }
     }
 
 }

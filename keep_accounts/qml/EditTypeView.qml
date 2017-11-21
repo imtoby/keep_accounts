@@ -105,7 +105,7 @@ ListView{
             anchors.rightMargin: 6
             horizontalAlignment: TextInput.AlignLeft
             verticalAlignment: TextInput.AlignVCenter
-            color: Config.balanceColor
+            color: Config.amountColor
             text: editView.currentItem.typeName
 
             property string sourceText: text
@@ -265,7 +265,7 @@ ListView{
                     anchors.rightMargin: 4*Config.margin
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: TextInput.AlignVCenter
-                    color: Config.balanceColor
+                    color: Config.amountColor
 
                     Text {
                         id: placeholderTextComponent
