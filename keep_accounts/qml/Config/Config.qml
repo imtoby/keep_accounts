@@ -32,7 +32,7 @@ QtObject{
 
     readonly property variant locale: Qt.locale()
     readonly property string dateFormat: "yyyy-MM-dd"
-    readonly property string topTypeId: "topTypeId_0"
+    readonly property string topTypeId: infoManager.topTypeId();
 
     readonly property int out_type:  0x00
     readonly property int in_type:   0x01

@@ -296,10 +296,12 @@ MouseArea {
                         hide()
 
                         // TODO save data
-//                        inOrOutType
 //                        amountInput.text
-//                        typeContent.typeId
-//                        typeContent.parentId
+
+                        infoManager.addRecord(inOrOutType, typeContent.parentId,
+                                              typeContent.typeId, dateTxt.text,
+                                              amountInput.text * 1.0,
+                                              remarkInput.text)
                     }
 
                     Text{

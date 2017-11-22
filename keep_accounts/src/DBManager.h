@@ -28,7 +28,7 @@ public:
 signals:
 
 public slots:
-    void addRecordData(const RecordItem* const recordItem);
+    bool addRecordData(const RecordItem* const recordItem);
     void updateRecordData(const QString &millonSecs, const QString &key,
                           const QString &value);
 

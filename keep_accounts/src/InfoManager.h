@@ -5,6 +5,7 @@
 
 #include "TypeModel.h"
 #include "ConfigInfo.h"
+#include "RecordItem.h"
 
 class InfoManagerPrivate;
 
@@ -19,6 +20,12 @@ public slots:
     void doDeleteType(int index, int type, const QString& typeId,
                       const QString& parentId);
 
+    // for record items
+    void doAddRecord(RecordItem* item, int type, const QString& parentId
+                     , const QString& typeId, const QString& dateTime
+                     , double amount, const QString& note = QString()
+            , const QString& icon = QString());
+
 signals:
     void addType(TypeInfo* info, const QString& typeName,
                  int type, const QString& parentId,
@@ -27,6 +34,12 @@ signals:
                          const QString& parentId);
     void deleteTypeFinished(int index, int type, const QString& typeId,
                             const QString& parentId);
+
+    // for record items
+    void addRecord(RecordItem* item, int type, const QString& parentId
+                   , const QString& typeId, const QString& dateTime
+                   , double amount, const QString& note = QString()
+          , const QString& icon = QString());
 };
 
 class InfoManager : public QObject
@@ -35,6 +48,14 @@ class InfoManager : public QObject
 public:
     explicit InfoManager(QObject *parent = nullptr);
     ~InfoManager();
+
+    Q_INVOKABLE QString dateFormat() const {
+        return KA::DATE_FORMAT;
+    }
+
+    Q_INVOKABLE QString topTypeId() const {
+        return KA::TOP_TYPE_ID;
+    }
 
     Q_INVOKABLE void initData();
     Q_INVOKABLE TypeModel* editTypeModel(int type,
@@ -62,11 +83,10 @@ signals:
     void deleteTypeFinished();
 
     // for record items
-    void addRecord(int type, const QString& typeId, const QString& parentId
-                   // TODO
-
-                   , const QString& icon = QString()
-                   );
+    void addRecord(int type, const QString& parentId, const QString& typeId
+                   , const QString& dateTime, double amount
+                   , const QString& note = QString()
+            , const QString& icon = QString());
 
 private slots:
     void initTypeData();
@@ -76,6 +96,13 @@ private slots:
                            const QString& parentId);
     void doDeleteTypeFinished(int index, int type, const QString& typeId,
                               const QString& parentId);
+
+    // for record items
+    void doAddRecord(int type, const QString& parentId, const QString& typeId
+                     , const QString& dateTime, double amount
+                     , const QString& note = QString()
+            , const QString& icon = QString());
+
 
 private:
     QScopedPointer<InfoManagerPrivate> d_ptr;

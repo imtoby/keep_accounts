@@ -78,6 +78,11 @@ InfoManager::InfoManager(QObject *parent)
     connect(d->worker, &Worker::deleteTypeFinished,
             this, &InfoManager::doDeleteTypeFinished);
 
+    connect(this, &InfoManager::addRecord, this, &InfoManager::doAddRecord);
+    connect(d->worker, &Worker::addRecord, d->worker, &Worker::doAddRecord);
+//    connect(d->worker, &Worker::addTypeFinished, this,
+//            &InfoManager::doAddTypeFinished);
+
     d->workerThread.start();
 }
 
@@ -265,6 +270,17 @@ void InfoManager::doDeleteTypeFinished(int index, int type,
     }
 }
 
+void InfoManager::doAddRecord(int type, const QString &parentId,
+                              const QString &typeId, const QString &dateTime,
+                              double amount, const QString &note,
+                              const QString &icon)
+{
+    Q_D(InfoManager);
+    RecordItem* item = new RecordItem(this);
+    emit d->worker->addRecord(item, type, parentId, typeId,
+                              dateTime, amount, note, icon);
+}
+
 
 void InfoManagerPrivate::init()
 {
@@ -349,5 +365,23 @@ void Worker::doDeleteType(int index, int type, const QString &typeId,
     }
     if (success) {
         emit deleteTypeFinished(index, type, typeId, parentId);
+    }
+}
+
+void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
+                         const QString &typeId, const QString &dateTime,
+                         double amount, const QString &note, const QString &icon)
+{
+    item->setType(type);
+    item->setAmount(amount);
+    item->setNote(note);
+    item->setIcon(icon);
+
+    bool success = KA_DB->addRecordData(item);
+
+    qDebug() << __FUNCTION__ << success;
+
+    if (success) {
+//        emit addTypeFinished(info, type, parentId);
     }
 }

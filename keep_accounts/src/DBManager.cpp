@@ -30,9 +30,11 @@ DBManager::~DBManager()
 {
 }
 
-void DBManager::addRecordData(const RecordItem* const recordItem)
+bool DBManager::addRecordData(const RecordItem* const recordItem)
 {
     qDebug() << __FUNCTION__;
+
+    bool addSuccess = false;
 
     QSqlDatabase db = database();
     if(db.open()){
@@ -56,11 +58,15 @@ void DBManager::addRecordData(const RecordItem* const recordItem)
 
         if(query.lastError().isValid()){
             qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+        } else {
+            addSuccess = true;
         }
 
         query.clear();
         db.close();
     }
+
+    return addSuccess;
 }
 
 void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
@@ -133,7 +139,6 @@ bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
 
             query.clear();
             db.close();
-            return success;
         }
 
     } else {
@@ -225,8 +230,6 @@ bool DBManager::addTypeInfo(const TypeInfo * const typeItem)
 
         query.clear();
         db.close();
-
-        return addSuccess;
     }
 
     return addSuccess;
