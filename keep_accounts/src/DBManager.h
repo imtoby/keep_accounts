@@ -41,6 +41,8 @@ public slots:
     bool deleteTypeInfoByParentId(const QString &parentId);
     int typeCount(const QString& parentId = QString()) const;
 
+    QString getTypeName(const QString &typeId) const;
+
 private:
     QSqlDatabase database() const;
     void createDatabase() const;

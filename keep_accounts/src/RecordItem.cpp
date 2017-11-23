@@ -2,13 +2,22 @@
 #include "ConfigInfo.h"
 #include "base/kglobal.h"
 
+#include <QDateTime>
+
 class RecordItemPrivate
 {
 public:
     RecordItemPrivate(RecordItem *parent)
         : q_ptr(parent)
         , type(KA::OUT)
-    {}
+    {
+        dateTime = QDateTime::currentDateTime().toString(KA::DATE_TIME_FORMAT);
+        millonSecs = QDateTime::currentMSecsSinceEpoch();
+        QDate date = QDate::currentDate();
+        year    = date.year();
+        month   = date.month();
+        day     = date.day();
+    }
 
 private:
     RecordItem * const q_ptr;

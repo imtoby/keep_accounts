@@ -42,22 +42,23 @@ bool DBManager::addRecordData(const RecordItem* const recordItem)
         bool check = query.prepare(KA::TABLE_RECORDS_INSERT);
 
         if(check){
-            query.bindValue(0, recordItem->millonSecs());
-            query.bindValue(1, recordItem->dateTime());
-            query.bindValue(2, recordItem->year());
-            query.bindValue(3, recordItem->month());
-            query.bindValue(4, recordItem->day());
-            query.bindValue(5, recordItem->type());
-            query.bindValue(6, recordItem->parentType());
-            query.bindValue(7, recordItem->childType());
-            query.bindValue(8, recordItem->amount());
-            query.bindValue(9, recordItem->note());
+            query.bindValue(0,  recordItem->millonSecs());
+            query.bindValue(1,  recordItem->dateTime());
+            query.bindValue(2,  recordItem->year());
+            query.bindValue(3,  recordItem->month());
+            query.bindValue(4,  recordItem->day());
+            query.bindValue(5,  recordItem->type());
+            query.bindValue(6,  recordItem->parentType());
+            query.bindValue(7,  recordItem->childType());
+            query.bindValue(8,  recordItem->amount());
+            query.bindValue(9,  recordItem->note());
             query.bindValue(10, recordItem->icon());
             query.exec();
         }
 
         if(query.lastError().isValid()){
-            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+            qDebug() << __FUNCTION__
+                     << QStringLiteral(" Error: ") << query.lastError();
         } else {
             addSuccess = true;
         }
@@ -101,7 +102,7 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
         }
 
     } else {
-        qDebug() << __FUNCTION__ << " Error: key is not exsit.";
+        qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
     }
 }
 
@@ -142,7 +143,7 @@ bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
         }
 
     } else {
-        qDebug() << __FUNCTION__ << " Error: key is not exsit.";
+        qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
     }
 
     return success;
@@ -155,20 +156,21 @@ QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
         QSqlDatabase db = database();
         if(db.open()){
             QSqlQuery query(db);
-            const QString sqlString = QString("select "
-                                              + KA::ID           + ","
-                                              + KA::TYPE         + ","
-                                              + KA::TYPE_NAME    + ","
-                                              + KA::INDEX        + ","
-                                              + KA::MILLON_SECS  + ","
-                                              + KA::ICON         + ","
-                                              + KA::PARENT_ID    +
-                                              " from "     + KA::DATABASE_TABLE_NAME_TYPE +
-                                              " where "    + KA::TYPE +
-                                              "='%1'"
-                                              " and "      + KA::PARENT_ID +
-                                              "='%2' order by " + KA::MILLON_SECS +
-                                              " ASC")
+            const QString sqlString
+                    = QString("select "
+                              + KA::ID           + ","
+                              + KA::TYPE         + ","
+                              + KA::TYPE_NAME    + ","
+                              + KA::INDEX        + ","
+                              + KA::MILLON_SECS  + ","
+                              + KA::ICON         + ","
+                              + KA::PARENT_ID    +
+                              " from "     + KA::DATABASE_TABLE_NAME_TYPE +
+                              " where "    + KA::TYPE +
+                              "='%1'"
+                              " and "      + KA::PARENT_ID +
+                              "='%2' order by " + KA::MILLON_SECS +
+                              " ASC")
                     .arg(QString::number(inorOut))
                     .arg(parentId);
 
@@ -193,7 +195,8 @@ QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
             query.clear();
             db.close();
 
-            qDebug() << __FUNCTION__ << "list.size: " << list.size();
+            qDebug() << __FUNCTION__
+                     << QStringLiteral("list.size: ") << list.size();
 
             return list;
         }
@@ -223,7 +226,8 @@ bool DBManager::addTypeInfo(const TypeInfo * const typeItem)
         }
 
         if(query.lastError().isValid()){
-            qDebug() << __FUNCTION__ << " Error: " << query.lastError();
+            qDebug() << __FUNCTION__
+                     << QStringLiteral(" Error: ") << query.lastError();
         } else {
             addSuccess = true;
         }
@@ -315,9 +319,10 @@ int DBManager::typeCount(const QString &parentId) const
     if(db.open()){
         QSqlQuery query(db);
 
-        const QString sqlString = QString("select count(*) from "
-                                          + KA::DATABASE_TABLE_NAME_TYPE +
-                                          " where " + KA::PARENT_ID + "='%1'").arg(parentId);
+        const QString sqlString
+                = QString("select count(*) from "
+                          + KA::DATABASE_TABLE_NAME_TYPE +
+                          " where " + KA::PARENT_ID + "='%1'").arg(parentId);
 
         query.exec(sqlString);
 
@@ -337,13 +342,48 @@ int DBManager::typeCount(const QString &parentId) const
     return count;
 }
 
+QString DBManager::getTypeName(const QString &typeId) const
+{
+    if (typeCount(typeId) > 0) {
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+            const QString sqlString
+                    = QString("select " + KA::TYPE_NAME +
+                              " from "  + KA::DATABASE_TABLE_NAME_TYPE +
+                              " where " + KA::TYPE_NAME + "='%1' ").arg(typeId);
+
+            query.exec(sqlString);
+
+            QString typeName = QStringLiteral("");
+            while (query.next()) {
+                typeName = query.value(0).toString();
+                break;
+            }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+            query.clear();
+            db.close();
+
+            qDebug() << __FUNCTION__
+                     << QStringLiteral("typeName: ") << typeName;
+
+            return typeName;
+        }
+    }
+    return QStringLiteral("");
+}
+
 QSqlDatabase DBManager::database() const
 {
     QSqlDatabase db;
     if (QSqlDatabase::contains(KA::DATABASE_BASE_NAME)) {
         db = QSqlDatabase::database(KA::DATABASE_BASE_NAME);
     } else {
-        db = QSqlDatabase::addDatabase("QSQLITE", KA::DATABASE_BASE_NAME);
+        db = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"),
+                                       KA::DATABASE_BASE_NAME);
         db.setDatabaseName(DatabaseFileName);
     }
     return db;
@@ -353,17 +393,19 @@ void DBManager::createDatabase() const
 {
     qDebug() << QSqlDatabase::drivers();
     if(!QFile::exists(DatabaseFileName)){
-        qDebug() << "Database File: \"" << DatabaseFileName
-                 << "\" is not exist, Creating...";
+        qDebug() << QStringLiteral("Database File: \"")
+                 << DatabaseFileName
+                 << QStringLiteral("\" is not exist, Creating...");
 
         QDir dbDir(DatabaseDirPath);
         if(!dbDir.exists()){
-            qDebug() << "Database Dir Path: \"" << DatabaseDirPath
-                     << "\" is not exist, Creating...";
+            qDebug() << QStringLiteral("Database Dir Path: \"")
+                     << DatabaseDirPath
+                     << QStringLiteral("\" is not exist, Creating...");
             dbDir.mkpath(DatabaseDirPath);
         }
 
-        QSqlDatabase qdb = QSqlDatabase::addDatabase("QSQLITE",
+        QSqlDatabase qdb = QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"),
                                                      KA::DATABASE_BASE_NAME);
         qdb.setDatabaseName(DatabaseFileName);
 
@@ -373,7 +415,7 @@ void DBManager::createDatabase() const
         }
 
         if(qdb.lastError().isValid()){
-            qDebug() << "lastError: " << qdb.lastError().text();
+            qDebug() << QStringLiteral("lastError: ") << qdb.lastError().text();
         }
 
         qdb.close();

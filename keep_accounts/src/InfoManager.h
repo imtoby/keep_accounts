@@ -40,6 +40,7 @@ signals:
                    , const QString& typeId, const QString& dateTime
                    , double amount, const QString& note = QString()
           , const QString& icon = QString());
+    void addRecordFinished(RecordItem* item, int type, const QString& parentId);
 };
 
 class InfoManager : public QObject
@@ -102,6 +103,8 @@ private slots:
                      , const QString& dateTime, double amount
                      , const QString& note = QString()
             , const QString& icon = QString());
+    void doAddRecordFinished(RecordItem* item, int type,
+                             const QString& parentId);
 
 
 private:

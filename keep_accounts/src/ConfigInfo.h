@@ -20,6 +20,9 @@ enum InorOut {
 
 const QString DATE_SEPARATOR= "-";
 const QString DATE_FORMAT   = "yyyy"+DATE_SEPARATOR+"MM"+DATE_SEPARATOR+"dd";
+const QString TIME_SEPARATOR= ":";
+const QString TIME_FORMAT   = "hh"+TIME_SEPARATOR+"mm"+TIME_SEPARATOR+"ss.zzz";
+const QString DATE_TIME_FORMAT = DATE_FORMAT + "_" + TIME_FORMAT;
 const QString TOP_TYPE_ID   = "topTypeId_0";
 
 // for every record item

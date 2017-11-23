@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QThread>
+#include <QStringList>
 
 namespace {
 
@@ -80,8 +81,8 @@ InfoManager::InfoManager(QObject *parent)
 
     connect(this, &InfoManager::addRecord, this, &InfoManager::doAddRecord);
     connect(d->worker, &Worker::addRecord, d->worker, &Worker::doAddRecord);
-//    connect(d->worker, &Worker::addTypeFinished, this,
-//            &InfoManager::doAddTypeFinished);
+    connect(d->worker, &Worker::addRecordFinished, this,
+            &InfoManager::doAddRecordFinished);
 
     d->workerThread.start();
 }
@@ -281,6 +282,12 @@ void InfoManager::doAddRecord(int type, const QString &parentId,
                               dateTime, amount, note, icon);
 }
 
+void InfoManager::doAddRecordFinished(RecordItem *item, int type,
+                                      const QString &parentId)
+{
+    // TODO
+}
+
 
 void InfoManagerPrivate::init()
 {
@@ -376,12 +383,35 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
     item->setAmount(amount);
     item->setNote(note);
     item->setIcon(icon);
+    if (KA::TOP_TYPE_ID != parentId) {
+        item->setParentType(KA_DB->getTypeName(parentId));
+    } else {
+        item->setParentType(QStringLiteral(""));
+    }
+    item->setChildType(KA_DB->getTypeName(typeId));
+
+    QStringList dateInfos = dateTime.split(KA::DATE_SEPARATOR);
+    if (dateInfos.size() > 0) {
+        QString value = dateInfos.at(0);
+        item->setYear(value.toInt());
+        value = dateInfos.at(1);
+        item->setMonth(value.toInt());
+        value = dateInfos.at(2);
+        item->setDay(value.toInt());
+    }
+
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    item->setMillonSecs(currentDateTime.toMSecsSinceEpoch());
+
+    currentDateTime.setDate(QDate(item->year(), item->month(), item->day()));
+    item->setDateTime(currentDateTime.toString(KA::DATE_TIME_FORMAT));
+
 
     bool success = KA_DB->addRecordData(item);
 
     qDebug() << __FUNCTION__ << success;
 
     if (success) {
-//        emit addTypeFinished(info, type, parentId);
+        emit addRecordFinished(item, type, parentId);
     }
 }
