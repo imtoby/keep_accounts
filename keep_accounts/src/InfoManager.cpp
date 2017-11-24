@@ -271,6 +271,11 @@ void InfoManager::doDeleteTypeFinished(int index, int type,
     }
 }
 
+void InfoManager::initRecordData()
+{
+    // TODO
+}
+
 void InfoManager::doAddRecord(int type, const QString &parentId,
                               const QString &typeId, const QString &dateTime,
                               double amount, const QString &note,

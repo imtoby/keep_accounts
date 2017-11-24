@@ -99,6 +99,7 @@ private slots:
                               const QString& parentId);
 
     // for record items
+    void initRecordData();
     void doAddRecord(int type, const QString& parentId, const QString& typeId
                      , const QString& dateTime, double amount
                      , const QString& note = QString()
