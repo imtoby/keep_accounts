@@ -16,6 +16,8 @@ TypeModel* ChildInModel     = NULL;
 TypeModel* TopOutModel      = NULL;
 TypeModel* ChildOutModel    = NULL;
 
+RecordModel* CurrentRecordModel = NULL;
+
 int GetCount(int type, const QString &parentId)
 {
     if (KA::OUT == type) {
@@ -163,6 +165,11 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
+RecordModel *InfoManager::recordModel()
+{
+    return CurrentRecordModel;
+}
+
 QString InfoManager::getParentTypeName(int type, const QString &parentId) const
 {
     TypeInfo* info = NULL;
@@ -274,6 +281,8 @@ void InfoManager::doDeleteTypeFinished(int index, int type,
 void InfoManager::initRecordData()
 {
     // TODO
+
+    emit initRecordFinished();
 }
 
 void InfoManager::doAddRecord(int type, const QString &parentId,
@@ -309,6 +318,9 @@ void InfoManagerPrivate::init()
     if (ChildOutModel == NULL) {
         ChildOutModel = new TypeModel(q);
     }
+    if (CurrentRecordModel == NULL) {
+        CurrentRecordModel = new RecordModel(q);
+    }
     if (worker == NULL) {
         worker = new Worker;
     }
@@ -337,6 +349,10 @@ void InfoManagerPrivate::uninit()
     if (ChildOutModel) {
         ChildOutModel->deleteLater();
         ChildOutModel = NULL;
+    }
+    if (CurrentRecordModel) {
+        CurrentRecordModel->deleteLater();
+        CurrentRecordModel = NULL;
     }
     if (selectOutTypeModel) {
         selectOutTypeModel->deleteLater();

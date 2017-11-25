@@ -6,6 +6,7 @@
 #include "TypeModel.h"
 #include "ConfigInfo.h"
 #include "RecordItem.h"
+#include "RecordModel.h"
 
 class InfoManagerPrivate;
 
@@ -69,6 +70,8 @@ public:
                                  const QString& parentId,
                                  const QString& typeName);
 
+    Q_INVOKABLE RecordModel* recordModel();
+
 private:
     // parentId could not equals KA::TOP_TYPE_ID
     QString getParentTypeName(int type, const QString& parentId) const;
@@ -84,6 +87,7 @@ signals:
     void deleteTypeFinished();
 
     // for record items
+    void initRecordFinished();
     void addRecord(int type, const QString& parentId, const QString& typeId
                    , const QString& dateTime, double amount
                    , const QString& note = QString()

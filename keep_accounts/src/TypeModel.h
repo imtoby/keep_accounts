@@ -1,3 +1,9 @@
+/*!
+ * Copyright (C) 2017 by ZhaoDongshuang
+ * Author: ZhaoDongshunag
+ * Email: imtoby@126.com
+ * Date: 2017-11-25
+ */
 #ifndef TYPEMODEL_H_AEB5BAAE_7DBF_531A_A17E_123B9E0D0EA9
 #define TYPEMODEL_H_AEB5BAAE_7DBF_531A_A17E_123B9E0D0EA9
 
