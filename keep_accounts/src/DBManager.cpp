@@ -30,6 +30,162 @@ DBManager::~DBManager()
 {
 }
 
+void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
+                                 const QString &value)
+{
+    qDebug() << __FUNCTION__;
+    if (KA::RECORD_ITEM_CONTENT.contains(key)) {
+
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+
+            const QString table_records_update("update "
+                                               + KA::DATABASE_TABLE_NAME_RECORDS
+                                               + " set " + key + "=? where "
+                                               + KA::MILLON_SECS + "=?");
+
+            bool check = query.prepare(table_records_update);
+
+            if(check){
+                query.bindValue(0, value);
+                query.bindValue(1, millonSecs);
+                query.exec();
+            }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+
+            query.clear();
+            db.close();
+        }
+
+    } else {
+        qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
+    }
+}
+
+QObjectList DBManager::getRecordItems(int year, int month, QObject *parent)
+{
+    QSqlDatabase db = database();
+    if(db.open()) {
+        QSqlQuery query(db);
+        const QString sqlString
+                = QString("select "
+                          + KA::MILLON_SECS + ","
+                          + KA::DATE_TIME   + ","
+                          + KA::YEAR        + ","
+                          + KA::MONTH       + ","
+                          + KA::DAY         + ","
+                          + KA::TYPE        + ","
+                          + KA::PARENT_TYPE + ","
+                          + KA::CHILD_TYPE  + ","
+                          + KA::AMOUNT      + ","
+                          + KA::NOTE        + ","
+                          + KA::ICON        +
+                          " from "          + KA::DATABASE_TABLE_NAME_RECORDS +
+                          " where "         + KA::YEAR +
+                          "='%1' and "      + KA::MONTH +
+                          "='%2' order by " + KA::DATE_TIME +
+                          " DESC")
+                .arg(QString::number(year))
+                .arg(QString::number(month));
+
+        query.exec(sqlString);
+
+        QObjectList list;
+        while (query.next()) {
+            RecordItem* item = new RecordItem(parent);
+            item->setMillonSecs(    query.value(0).toULongLong());
+            item->setDateTime(      query.value(1).toString());
+            item->setYear(          query.value(2).toInt());
+            item->setMonth(         query.value(3).toInt());
+            item->setDay(           query.value(4).toInt());
+            item->setType(          query.value(5).toInt());
+            item->setParentType(    query.value(6).toString());
+            item->setChildType(     query.value(7).toString());
+            item->setNote(          query.value(8).toString());
+            item->setAmount(        query.value(9).toDouble());
+            item->setIcon(          query.value(10).toString());
+            list.push_back(item);
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        }
+        query.clear();
+        db.close();
+
+        qDebug() << __FUNCTION__
+                 << QStringLiteral("list.size: ") << list.size();
+
+        return list;
+    }
+    return QObjectList();
+}
+
+QObjectList DBManager::getRecordItems(int year, int month, int type, QObject *parent)
+{
+    QSqlDatabase db = database();
+    if(db.open()) {
+        QSqlQuery query(db);
+        const QString sqlString
+                = QString("select "
+                          + KA::MILLON_SECS + ","
+                          + KA::DATE_TIME   + ","
+                          + KA::YEAR        + ","
+                          + KA::MONTH       + ","
+                          + KA::DAY         + ","
+                          + KA::TYPE        + ","
+                          + KA::PARENT_TYPE + ","
+                          + KA::CHILD_TYPE  + ","
+                          + KA::AMOUNT      + ","
+                          + KA::NOTE        + ","
+                          + KA::ICON        +
+                          " from "          + KA::DATABASE_TABLE_NAME_RECORDS +
+                          " where "         + KA::YEAR +
+                          "='%1' and "      + KA::MONTH +
+                          "='%2' and "      + KA::TYPE +
+                          "='%3' order by " + KA::DATE_TIME +
+                          " DESC")
+                .arg(QString::number(year))
+                .arg(QString::number(month))
+                .arg(QString::number(type));
+
+        query.exec(sqlString);
+
+        QObjectList list;
+        while (query.next()) {
+            RecordItem* item = new RecordItem(parent);
+            item->setMillonSecs(    query.value(0).toULongLong());
+            item->setDateTime(      query.value(1).toString());
+            item->setYear(          query.value(2).toInt());
+            item->setMonth(         query.value(3).toInt());
+            item->setDay(           query.value(4).toInt());
+            item->setType(          query.value(5).toInt());
+            item->setParentType(    query.value(6).toString());
+            item->setChildType(     query.value(7).toString());
+            item->setNote(          query.value(8).toString());
+            item->setAmount(        query.value(9).toDouble());
+            item->setIcon(          query.value(10).toString());
+            list.push_back(item);
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        }
+        query.clear();
+        db.close();
+
+        qDebug() << __FUNCTION__
+                 << QStringLiteral("list.size: ") << list.size();
+
+        return list;
+    }
+    return QObjectList();
+}
+
 bool DBManager::addRecordData(const RecordItem* const recordItem)
 {
     qDebug() << __FUNCTION__;
@@ -68,42 +224,6 @@ bool DBManager::addRecordData(const RecordItem* const recordItem)
     }
 
     return addSuccess;
-}
-
-void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
-                                 const QString &value)
-{
-    qDebug() << __FUNCTION__;
-    if (KA::RECORD_ITEM_CONTENT.contains(key)) {
-
-        QSqlDatabase db = database();
-        if(db.open()){
-            QSqlQuery query(db);
-
-            const QString table_records_update("update "
-                                               + KA::DATABASE_TABLE_NAME_RECORDS
-                                               + " set " + key + "=? where "
-                                               + KA::MILLON_SECS + "=?");
-
-            bool check = query.prepare(table_records_update);
-
-            if(check){
-                query.bindValue(0, value);
-                query.bindValue(1, millonSecs);
-                query.exec();
-            }
-
-            if(query.lastError().isValid()){
-                qDebug() << __FUNCTION__ << query.lastError();
-            }
-
-            query.clear();
-            db.close();
-        }
-
-    } else {
-        qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
-    }
 }
 
 bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,

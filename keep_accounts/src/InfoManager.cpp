@@ -35,7 +35,8 @@ int GetCount(int type, const QString &parentId)
     }
 }
 
-bool INIT_TYPE_INFO_FINISHED = false;
+bool INIT_TYPE_INFO_FINISHED    = false;
+bool INIT_RECORD_DATA_FINISHED  = false;
 
 }
 
@@ -280,8 +281,15 @@ void InfoManager::doDeleteTypeFinished(int index, int type,
 
 void InfoManager::initRecordData()
 {
-    // TODO
+    if (!INIT_RECORD_DATA_FINISHED) {
+        const QDate currentDate = QDate::currentDate();
+        QObjectList datas = KA_DB->getRecordItems(
+                    currentDate.year(), currentDate.month(), this);
+        CurrentRecordModel->clear();
+        CurrentRecordModel->set(&datas);
 
+        INIT_RECORD_DATA_FINISHED = true;
+    }
     emit initRecordFinished();
 }
 
@@ -296,10 +304,12 @@ void InfoManager::doAddRecord(int type, const QString &parentId,
                               dateTime, amount, note, icon);
 }
 
-void InfoManager::doAddRecordFinished(RecordItem *item, int type,
-                                      const QString &parentId)
+void InfoManager::doAddRecordFinished(RecordItem *item)
 {
-    // TODO
+    if (NULL != CurrentRecordModel) {
+        CurrentRecordModel->push_front(item);
+        emit addRecordFinished();
+    }
 }
 
 

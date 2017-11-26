@@ -28,9 +28,11 @@ public:
 signals:
 
 public slots:
-    bool addRecordData(const RecordItem* const recordItem);
     void updateRecordData(const QString &millonSecs, const QString &key,
                           const QString &value);
+    QObjectList getRecordItems(int year, int month, QObject *parent);
+    QObjectList getRecordItems(int year, int month, int type, QObject *parent);
+    bool addRecordData(const RecordItem* const recordItem);
 
     bool updateTypeInfo(const QString &typeId, const QString &key,
                         const QString &value);

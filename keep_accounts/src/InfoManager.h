@@ -92,6 +92,7 @@ signals:
                    , const QString& dateTime, double amount
                    , const QString& note = QString()
             , const QString& icon = QString());
+    void addRecordFinished();
 
 private slots:
     void initTypeData();
@@ -108,8 +109,7 @@ private slots:
                      , const QString& dateTime, double amount
                      , const QString& note = QString()
             , const QString& icon = QString());
-    void doAddRecordFinished(RecordItem* item, int type,
-                             const QString& parentId);
+    void doAddRecordFinished(RecordItem* item);
 
 
 private:
