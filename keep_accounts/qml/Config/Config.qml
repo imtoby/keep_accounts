@@ -9,13 +9,15 @@ QtObject{
     readonly property int headHeight: 120
     readonly property int cellHeight: 60
     readonly property color lineColor: "lightGray"
-    readonly property int lineWidth: 1
+    readonly property real lineWidth: 0.5
 
     readonly property color expensesColor:      "#A60000"
-    readonly property color incomeColor:        "#008500"
+    readonly property color incomeColor:        "#35CC4B"
     readonly property color amountColor:        "#05296E"
     readonly property color backgroundColor:    "#CCCCCC"
     readonly property color newAccountColor:    "#FFAD00"
+    readonly property color deleteColor:        "#FC635E"
+    readonly property color deletePressedColor: "#80FC635E"
 
     ///////////////////// Button index ///////////////////////
     readonly property int indexIncome:      0x00

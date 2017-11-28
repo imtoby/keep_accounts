@@ -30,14 +30,17 @@ Item {
         }
         ListView{
             anchors.fill: parent
+            anchors.margins: Config.lineWidth
             model: 200
             clip: true
             ScrollDecorator{
                 flickableItem: parent
             }
-            delegate: Item{
+            delegate: SlideLeftToDeleteDelegate {
                 width: background.width - Config.margin * 2
                 height: Config.cellHeight
+                deleteButtonColor: Config.deleteColor
+                deleteButtonPressedColor: Config.deletePressedColor
                 Text {
                     id: content
                     width: parent.width*3/5
@@ -71,8 +74,16 @@ Item {
                 Rectangle{
                     implicitHeight: Config.lineWidth
                     anchors{
-                        left: parent.left; leftMargin: Config.margin
-                        right: parent.right; rightMargin: Config.margin
+                        left: parent.left
+                        right: parent.right
+                    }
+                    color: Config.lineColor
+                }
+                Rectangle{
+                    implicitHeight: Config.lineWidth
+                    anchors{
+                        left: parent.left
+                        right: parent.right
                         bottom: parent.bottom
                     }
                     color: Config.lineColor

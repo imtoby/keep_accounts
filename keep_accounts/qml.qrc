@@ -20,5 +20,6 @@
         <file>qml/EditTypeView.qml</file>
         <file>qml/Dialog/KInfoDialog.qml</file>
         <file>qml/Dialog/KSelectTypeDialog.qml</file>
+        <file>qml/Tools/SlideLeftToDeleteDelegate.qml</file>
     </qresource>
 </RCC>
