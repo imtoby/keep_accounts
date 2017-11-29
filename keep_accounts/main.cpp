@@ -5,6 +5,7 @@
 
 #include "src/InfoManager.h"
 #include "src/TypeModel.h"
+#include "src/RecordModel.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,13 +18,18 @@ int main(int argc, char *argv[])
                                              "TypeModel",
                                              "Cannot create TypeModel.");
 
+    qmlRegisterUncreatableType<RecordModel, 1>("com.toby.keep_accounts", 1, 0,
+                                               "RecordModel",
+                                               "Cannot create TypeModel.");
+
     InfoManager* infoManager = new InfoManager(&app);
 
     engine.rootContext()->setContextProperty("infoManager", infoManager);
 
     engine.load(QUrl(QLatin1String("qrc:/main.qml")));
-    if (engine.rootObjects().isEmpty())
+    if (engine.rootObjects().isEmpty()) {
         return -1;
+    }
 
     return app.exec();
 }

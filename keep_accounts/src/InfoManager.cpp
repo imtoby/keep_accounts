@@ -101,6 +101,7 @@ InfoManager::~InfoManager()
 void InfoManager::initData()
 {
     initTypeData();
+    initRecordData();
 }
 
 TypeModel *InfoManager::editTypeModel(int type, const QString& parentId)
@@ -417,7 +418,7 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
     if (KA::TOP_TYPE_ID != parentId) {
         item->setParentType(KA_DB->getTypeName(parentId));
     } else {
-        item->setParentType(QStringLiteral(""));
+        item->setParentType(KA::TOP_TYPE_ID);
     }
     item->setChildType(KA_DB->getTypeName(typeId));
 

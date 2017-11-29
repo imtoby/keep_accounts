@@ -105,8 +105,8 @@ QObjectList DBManager::getRecordItems(int year, int month, QObject *parent)
             item->setType(          query.value(5).toInt());
             item->setParentType(    query.value(6).toString());
             item->setChildType(     query.value(7).toString());
-            item->setNote(          query.value(8).toString());
-            item->setAmount(        query.value(9).toDouble());
+            item->setAmount(        query.value(8).toDouble());
+            item->setNote(          query.value(9).toString());
             item->setIcon(          query.value(10).toString());
             list.push_back(item);
         }
@@ -166,8 +166,8 @@ QObjectList DBManager::getRecordItems(int year, int month, int type, QObject *pa
             item->setType(          query.value(5).toInt());
             item->setParentType(    query.value(6).toString());
             item->setChildType(     query.value(7).toString());
-            item->setNote(          query.value(8).toString());
-            item->setAmount(        query.value(9).toDouble());
+            item->setAmount(        query.value(8).toDouble());
+            item->setNote(          query.value(9).toString());
             item->setIcon(          query.value(10).toString());
             list.push_back(item);
         }
@@ -272,54 +272,52 @@ bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
 QObjectList DBManager::getTypeInfos(KA::InorOut inorOut, QObject *parent,
                                     const QString &parentId)
 {
-    if (typeCount(parentId) > 0) {
-        QSqlDatabase db = database();
-        if(db.open()){
-            QSqlQuery query(db);
-            const QString sqlString
-                    = QString("select "
-                              + KA::ID           + ","
-                              + KA::TYPE         + ","
-                              + KA::TYPE_NAME    + ","
-                              + KA::INDEX        + ","
-                              + KA::MILLON_SECS  + ","
-                              + KA::ICON         + ","
-                              + KA::PARENT_ID    +
-                              " from "     + KA::DATABASE_TABLE_NAME_TYPE +
-                              " where "    + KA::TYPE +
-                              "='%1'"
-                              " and "      + KA::PARENT_ID +
-                              "='%2' order by " + KA::MILLON_SECS +
-                              " ASC")
-                    .arg(QString::number(inorOut))
-                    .arg(parentId);
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+        const QString sqlString
+                = QString("select "
+                          + KA::ID           + ","
+                          + KA::TYPE         + ","
+                          + KA::TYPE_NAME    + ","
+                          + KA::INDEX        + ","
+                          + KA::MILLON_SECS  + ","
+                          + KA::ICON         + ","
+                          + KA::PARENT_ID    +
+                          " from "     + KA::DATABASE_TABLE_NAME_TYPE +
+                          " where "    + KA::TYPE +
+                          "='%1'"
+                          " and "      + KA::PARENT_ID +
+                          "='%2' order by " + KA::MILLON_SECS +
+                          " ASC")
+                .arg(QString::number(inorOut))
+                .arg(parentId);
 
-            query.exec(sqlString);
+        query.exec(sqlString);
 
-            QObjectList list;
-            while (query.next()) {
-                TypeInfo* item = new TypeInfo(parent);
-                item->setTypeId(        query.value(0).toString());
-                item->setType(          query.value(1).toInt());
-                item->setTypeName(      query.value(2).toString());
-                item->setIndex(         query.value(3).toString());
-                item->setMillonSecs(    query.value(4).toULongLong());
-                item->setIcon(          query.value(5).toString());
-                item->setParentId(      query.value(6).toString());
-                list.push_back(item);
-            }
-
-            if(query.lastError().isValid()){
-                qDebug() << __FUNCTION__ << query.lastError();
-            }
-            query.clear();
-            db.close();
-
-            qDebug() << __FUNCTION__
-                     << QStringLiteral("list.size: ") << list.size();
-
-            return list;
+        QObjectList list;
+        while (query.next()) {
+            TypeInfo* item = new TypeInfo(parent);
+            item->setTypeId(        query.value(0).toString());
+            item->setType(          query.value(1).toInt());
+            item->setTypeName(      query.value(2).toString());
+            item->setIndex(         query.value(3).toString());
+            item->setMillonSecs(    query.value(4).toULongLong());
+            item->setIcon(          query.value(5).toString());
+            item->setParentId(      query.value(6).toString());
+            list.push_back(item);
         }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        }
+        query.clear();
+        db.close();
+
+        qDebug() << __FUNCTION__
+                 << QStringLiteral("list.size: ") << list.size();
+
+        return list;
     }
     return QObjectList();
 }
@@ -455,43 +453,44 @@ int DBManager::typeCount(const QString &parentId) const
         }
         query.clear();
         db.close();
-
-        return count;
     }
+
+    qDebug() << __FUNCTION__ << QStringLiteral("count") << count;
 
     return count;
 }
 
 QString DBManager::getTypeName(const QString &typeId) const
 {
-    if (typeCount(typeId) > 0) {
-        QSqlDatabase db = database();
-        if(db.open()){
-            QSqlQuery query(db);
-            const QString sqlString
-                    = QString("select " + KA::TYPE_NAME +
-                              " from "  + KA::DATABASE_TABLE_NAME_TYPE +
-                              " where " + KA::TYPE_NAME + "='%1' ").arg(typeId);
+    qDebug() << __FUNCTION__
+             << QStringLiteral("typeId: ") << typeId;
 
-            query.exec(sqlString);
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+        const QString sqlString
+                = QString("select " + KA::TYPE_NAME +
+                          " from "  + KA::DATABASE_TABLE_NAME_TYPE +
+                          " where " + KA::ID + "='%1' ").arg(typeId);
 
-            QString typeName = QStringLiteral("");
-            while (query.next()) {
-                typeName = query.value(0).toString();
-                break;
-            }
+        query.exec(sqlString);
 
-            if(query.lastError().isValid()){
-                qDebug() << __FUNCTION__ << query.lastError();
-            }
-            query.clear();
-            db.close();
-
-            qDebug() << __FUNCTION__
-                     << QStringLiteral("typeName: ") << typeName;
-
-            return typeName;
+        QString typeName = QStringLiteral("");
+        while (query.next()) {
+            typeName = query.value(0).toString();
+            break;
         }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        }
+        query.clear();
+        db.close();
+
+        qDebug() << __FUNCTION__
+                 << QStringLiteral("typeName: ") << typeName;
+
+        return typeName;
     }
     return QStringLiteral("");
 }

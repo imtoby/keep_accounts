@@ -33,7 +33,8 @@ QtObject{
     ///////////////////// Move direction /////////////////////
 
     readonly property variant locale: Qt.locale()
-    readonly property string dateFormat: "yyyy-MM-dd"
+    readonly property string dateSeparator: "-";
+    readonly property string dateFormat: infoManager.dateFormat();
     readonly property string topTypeId: infoManager.topTypeId();
 
     readonly property int out_type:  0x00

@@ -31,7 +31,7 @@ Item {
         ListView{
             anchors.fill: parent
             anchors.margins: Config.lineWidth
-            model: 200
+            model: infoManager.recordModel()
             clip: true
             ScrollDecorator{
                 flickableItem: parent
@@ -48,7 +48,7 @@ Item {
                     anchors.left: parent.left
                     anchors.leftMargin: Config.margin * 2
                     verticalAlignment: Text.AlignBottom
-                    text: qsTr("Test")
+                    text: model.modelData.note
                 }
                 Text {
                     id: dateTxt
@@ -58,7 +58,9 @@ Item {
                     anchors.leftMargin: Config.margin * 2
                     anchors.bottom: parent.bottom
                     verticalAlignment: Text.AlignVCenter
-                    text: qsTr("2016-08-08")
+                    text: model.modelData.year + Config.dateSeparator +
+                          model.modelData.month + Config.dateSeparator +
+                          model.modelData.day
                 }
                 Text {
                     id: amountTxt
@@ -68,7 +70,7 @@ Item {
                     anchors.rightMargin: Config.margin * 2
                     horizontalAlignment: Text.AlignRight
                     verticalAlignment: Text.AlignVCenter
-                    text: "12.34"
+                    text: model.modelData.amount
                 }
                 ///////line//////
                 Rectangle{
