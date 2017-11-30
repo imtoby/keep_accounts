@@ -26,6 +26,7 @@ public slots:
                      , const QString& typeId, const QString& dateTime
                      , double amount, const QString& note = QString()
             , const QString& icon = QString());
+    void doDeleteRecord(quint64 millonSecs);
 
 signals:
     void addType(TypeInfo* info, const QString& typeName,
@@ -42,6 +43,7 @@ signals:
                    , double amount, const QString& note = QString()
           , const QString& icon = QString());
     void addRecordFinished(RecordItem* item, int type, const QString& parentId);
+    void deleteRecordFinished(quint64 millonSecs);
 };
 
 class InfoManager : public QObject
@@ -93,6 +95,8 @@ signals:
                    , const QString& note = QString()
             , const QString& icon = QString());
     void addRecordFinished();
+    void deleteRecord(quint64 millonSecs);
+    void deleteRecordFinished();
 
 private slots:
     void initTypeData();
@@ -110,6 +114,7 @@ private slots:
                      , const QString& note = QString()
             , const QString& icon = QString());
     void doAddRecordFinished(RecordItem* item);
+    void doDeleteRecordFinished(quint64 millonSecs);
 
 
 private:

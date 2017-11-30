@@ -87,6 +87,10 @@ InfoManager::InfoManager(QObject *parent)
     connect(d->worker, &Worker::addRecordFinished, this,
             &InfoManager::doAddRecordFinished);
 
+    connect(this, &InfoManager::deleteRecord, d->worker, &Worker::doDeleteRecord);
+    connect(d->worker, &Worker::deleteRecordFinished,
+            this, &InfoManager::doDeleteRecordFinished);
+
     d->workerThread.start();
 }
 
@@ -313,6 +317,13 @@ void InfoManager::doAddRecordFinished(RecordItem *item)
     }
 }
 
+void InfoManager::doDeleteRecordFinished(quint64 millonSecs)
+{
+    if (NULL != CurrentRecordModel) {
+        CurrentRecordModel->deleteRecord(millonSecs);
+        emit deleteRecordFinished();
+    }
+}
 
 void InfoManagerPrivate::init()
 {
@@ -445,5 +456,13 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
 
     if (success) {
         emit addRecordFinished(item, type, parentId);
+    }
+}
+
+void Worker::doDeleteRecord(quint64 millonSecs)
+{
+    bool success = KA_DB->deleteRecord(millonSecs);
+    if (success) {
+        emit deleteRecordFinished(millonSecs);
     }
 }

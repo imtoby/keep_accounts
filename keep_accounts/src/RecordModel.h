@@ -19,6 +19,8 @@ public:
     explicit RecordModel(QObject* parent = nullptr);
     ~RecordModel();
 
+    void deleteRecord(quint64 millonSecs);
+
 private:
     QScopedPointer<RecordModelPrivate> d_ptr;
     Q_DECLARE_PRIVATE(RecordModel)

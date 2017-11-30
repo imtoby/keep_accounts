@@ -6,6 +6,7 @@
     File: RecordModel.h
  ***************************************************************************/
 #include "RecordModel.h"
+#include "RecordItem.h"
 
 class RecordModelPrivate
 {
@@ -27,4 +28,16 @@ RecordModel::RecordModel(QObject *parent)
 
 RecordModel::~RecordModel()
 {
+}
+
+void RecordModel::deleteRecord(quint64 millonSecs)
+{
+    QObjectList* list = getAll();
+    for (int i=0; i<list->size(); ++i) {
+        const RecordItem* const item = qobject_cast<RecordItem*>(list->at(i));
+        if (item->millonSecs() == millonSecs) {
+            remove(i);
+            break;
+        }
+    }
 }

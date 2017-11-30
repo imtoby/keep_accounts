@@ -226,6 +226,40 @@ bool DBManager::addRecordData(const RecordItem* const recordItem)
     return addSuccess;
 }
 
+bool DBManager::deleteRecord(quint64 millonSecs)
+{
+    qDebug() << __FUNCTION__;
+
+    bool success = false;
+
+    QSqlDatabase db = database();
+    if(db.open()){
+        QSqlQuery query(db);
+
+        const QString table_record_delete("delete from "
+                                          + KA::DATABASE_TABLE_NAME_RECORDS
+                                          + " where " + KA::MILLON_SECS + "=?");
+
+        bool check = query.prepare(table_record_delete);
+
+        if(check){
+            query.bindValue(0, millonSecs);
+            query.exec();
+        }
+
+        if(query.lastError().isValid()){
+            qDebug() << __FUNCTION__ << query.lastError();
+        } else {
+            success = true;
+        }
+
+        query.clear();
+        db.close();
+    }
+
+    return success;
+}
+
 bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
                                const QString &value)
 {
@@ -386,7 +420,6 @@ bool DBManager::deleteTypeInfoByTypeId(const QString &typeId)
 
         query.clear();
         db.close();
-        return success;
     }
 
     return success;

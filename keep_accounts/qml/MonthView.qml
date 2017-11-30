@@ -90,6 +90,10 @@ Item {
                     }
                     color: Config.lineColor
                 }
+
+                onDeleteButtonClicked: {
+                    infoManager.deleteRecord(model.modelData.millonSecs)
+                }
             }
             onMovementStarted: {
                 posY = contentY
