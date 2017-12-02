@@ -28,13 +28,23 @@ Item {
             color: Config.lineColor
             width: Config.lineWidth
         }
-        ListView{
+        ListView {
+            id: monthView
             anchors.fill: parent
             anchors.margins: Config.lineWidth
             model: infoManager.recordModel()
             clip: true
             ScrollDecorator{
                 flickableItem: parent
+            }
+            Text {
+                id: tipInfo
+                anchors.centerIn: parent
+                opacity: monthView.count === 0
+                Behavior on opacity {
+                    NumberAnimation { duration: 200 }
+                }
+                text: qsTr("本月暂无记录，点击 \"新增记录\" 添加新的记录")
             }
             delegate: SlideLeftToDeleteDelegate {
                 width: background.width - Config.margin * 2
@@ -109,6 +119,7 @@ Item {
             }
             property real posY: contentY
         }
+
     }
     EditDialog{
         id: editDialog
