@@ -15,7 +15,9 @@ Item {
     property alias amount: amountTotalObj.text
     property alias expenses: expensesTotalObj.text
     property alias income: incomeTotalObj.text
-    property alias month: monthObj.text
+
+    property int month: monthObj.initDate.getMonth() + 1
+    property int year: monthObj.initDate.getFullYear()
 
     signal clicked(int index)
 
@@ -191,8 +193,9 @@ Item {
 
                 Text{
                     id: monthObj
+                    property var initDate: new Date
                     anchors.fill: parent
-                    text: "2016/08"
+                    text: year + "/" + Config.padZero(month, 2)
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
                 }

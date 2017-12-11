@@ -4,13 +4,15 @@ import "Tools"
 
 Item {
     id: background
-    HeaderView{
+    HeaderView {
         id: headBackground
         onClicked: {
             switch(index){
             case Config.indexNewAccount:
-                editDialog.clearInputFocus()
-                editDialog.show()
+                editDialog.clearInputFocus();
+                editDialog.show();
+                break;
+            case Config.indexMonth:
                 break;
             }
         }

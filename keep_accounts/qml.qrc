@@ -21,5 +21,7 @@
         <file>qml/Dialog/KInfoDialog.qml</file>
         <file>qml/Dialog/KSelectTypeDialog.qml</file>
         <file>qml/Tools/SlideLeftToDeleteDelegate.qml</file>
+        <file>qml/Tools/BasePicker.qml</file>
+        <file>qml/Tools/YearMonthDayPicker.qml</file>
     </qresource>
 </RCC>

@@ -25,8 +25,8 @@ KComboBox{
         }
     }
 
-    function unitYear(month){
-        return  Config.padZero(month, 2) + "年"
+    function unitYear(year){
+        return  Config.padZero(year, 2) + "年"
     }
 
     onClicked: {
