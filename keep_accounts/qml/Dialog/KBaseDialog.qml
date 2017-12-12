@@ -8,6 +8,7 @@ Item {
     property bool canceledOnTouchOutside: true
     property alias contextActive: context.active
     property alias contextAsynchronous: context.asynchronous
+    property alias contextItem: context.item
     property alias contextSource: context.source
     property alias contextSourceComponent: context.sourceComponent
     property alias contextStatus: context.status

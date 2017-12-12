@@ -1,8 +1,7 @@
 import QtQuick 2.3
 
-Row {
+Item {
     id: yearMonthDayPicker
-    anchors.fill: parent
     objectName: "YearMonthDayPicker"
 
     property int maxYear: 2050
@@ -62,6 +61,7 @@ Row {
     BasePicker {
         id: monthPicker
         implicitWidth: 60
+        anchors.left: yearPicker.right
         property bool userOperated: false
         Component.onCompleted: {
             initMonths();
@@ -102,6 +102,7 @@ Row {
     BasePicker {
         id: dayPicker
         implicitWidth: 100
+        anchors.left: monthPicker.right
         property bool userOperated: false
         property var locale: Qt.locale("zh_CN")
         Component.onCompleted: {

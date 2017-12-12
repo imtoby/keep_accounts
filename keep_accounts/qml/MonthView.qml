@@ -1,6 +1,7 @@
 import QtQuick 2.3
 import "Config"
 import "Tools"
+import "Dialog"
 
 Item {
     id: background
@@ -13,6 +14,7 @@ Item {
                 editDialog.show();
                 break;
             case Config.indexMonth:
+                datePickerDialog.startPicker(year, month);
                 break;
             }
         }
@@ -125,5 +127,15 @@ Item {
     }
     EditDialog{
         id: editDialog
+    }
+    KDatePickerDialog {
+        id: datePickerDialog
+        parent: rootPage
+
+        onAccepted: {
+        }
+
+        onRejected: {
+        }
     }
 }
