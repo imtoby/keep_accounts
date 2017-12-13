@@ -6,7 +6,6 @@ KBaseDialog {
     id: baseDialog
     anchors.fill: parent
 
-    property int day: 12
     property int dialogWidth: baseDialog.width * 0.8
     property int dialogHeight: dialogWidth * 0.8
     property int month: 12
@@ -19,9 +18,6 @@ KBaseDialog {
     function startPicker(year, month, day) {
         baseDialog.year = year;
         baseDialog.month = month;
-        if (typeof day != "undefined") {
-            baseDialog.day = day;
-        }
         open();
     }
 
@@ -59,12 +55,11 @@ KBaseDialog {
             anchors.bottom: cancelBtn.top
             anchors.margins: 20
 
-            YearMonthDayPicker {
-                id: yearMonthDayPicker
+            YearMonthPicker {
+                id: yearMonthPicker
                 width: 250
                 height: parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
-                day: baseDialog.day
                 month: baseDialog.month
                 year: baseDialog.year
             }
@@ -101,9 +96,9 @@ KBaseDialog {
             }
             onClicked: {
                 baseDialog.close()
-                accepted(yearMonthDayPicker.year,
-                         yearMonthDayPicker.month,
-                         yearMonthDayPicker.day)
+                accepted(yearMonthPicker.year,
+                         yearMonthPicker.month,
+                         yearMonthPicker.day)
             }
         }
     }

@@ -24,5 +24,6 @@
         <file>qml/Tools/BasePicker.qml</file>
         <file>qml/Tools/YearMonthDayPicker.qml</file>
         <file>qml/Dialog/KDatePickerDialog.qml</file>
+        <file>qml/Tools/YearMonthPicker.qml</file>
     </qresource>
 </RCC>
