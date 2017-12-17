@@ -133,6 +133,8 @@ Item {
         parent: rootPage
 
         onAccepted: {
+            headBackground.year = year;
+            headBackground.month = month;
         }
 
         onRejected: {

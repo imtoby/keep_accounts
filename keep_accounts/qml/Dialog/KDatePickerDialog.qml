@@ -9,13 +9,13 @@ KBaseDialog {
     property int dialogWidth: baseDialog.width * 0.8
     property int dialogHeight: dialogWidth * 0.8
     property int month: 12
-    property string title: qsTr("日期选择")
+    property string title: qsTr("月份选择")
     property int year: 2017
 
-    signal accepted(int year, int month, int day)
+    signal accepted(int year, int month)
     signal rejected()
 
-    function startPicker(year, month, day) {
+    function startPicker(year, month) {
         baseDialog.year = year;
         baseDialog.month = month;
         open();
@@ -57,7 +57,7 @@ KBaseDialog {
 
             YearMonthPicker {
                 id: yearMonthPicker
-                width: 250
+                width: parent.width
                 height: parent.height
                 anchors.horizontalCenter: parent.horizontalCenter
                 month: baseDialog.month
@@ -97,8 +97,7 @@ KBaseDialog {
             onClicked: {
                 baseDialog.close()
                 accepted(yearMonthPicker.year,
-                         yearMonthPicker.month,
-                         yearMonthPicker.day)
+                         yearMonthPicker.month)
             }
         }
     }
