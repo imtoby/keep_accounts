@@ -26,5 +26,6 @@
         <file>qml/Dialog/KDatePickerDialog.qml</file>
         <file>qml/Tools/YearMonthPicker.qml</file>
         <file>qml/Tools/TimePositioner.qml</file>
+        <file>qml/Dialog/KContainerDialog.qml</file>
     </qresource>
 </RCC>

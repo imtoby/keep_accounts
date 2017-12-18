@@ -163,10 +163,26 @@ MouseArea {
                         property string parentId: ""
 
                         anchors.fill: parent
-                        text: "分类" // TODO show last select type name
+                        text: "分类"
                         horizontalAlignment: Text.AlignHCenter
                         verticalAlignment: Text.AlignVCenter
                         color: Config.newAccountColor
+                    }
+
+                    KButton {
+                        width: parent.height
+                        height: width
+                        anchors.right: parent.right
+                        Image {
+                            width: parent.width/2
+                            height: width
+                            anchors.centerIn: parent
+                            sourceSize: Qt.size(parent.width/2, parent.width/2)
+                            source: "qrc:/res/setting.png"
+                        }
+                        onClicked: {
+//                            selectTypeDialog.open()
+                        }
                     }
                 }
 

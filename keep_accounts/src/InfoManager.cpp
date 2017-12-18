@@ -203,6 +203,7 @@ void InfoManager::initTypeData()
 
         Q_D(InfoManager);
 
+        d->selectOutTypeModel->clear();
         for (int i=0; i<TopOutModel->count(); ++i) {
             TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopOutModel->get(i));
             d->selectOutTypeModel->append(typeInfo);
@@ -211,6 +212,7 @@ void InfoManager::initTypeData()
             d->selectOutTypeModel->appendList(&infos);
         }
 
+        d->selectInTypeModel->clear();
         for (int i=0; i<TopInModel->count(); ++i) {
             TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopInModel->get(i));
             d->selectInTypeModel->append(typeInfo);

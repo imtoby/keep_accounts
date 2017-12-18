@@ -75,7 +75,9 @@ Item {
 
     onContentRectangleClicked: {
         if (ListView.view !== null) {
-            ListView.view.currentItem.hideDeleteButton(true)
+            if (ListView.view.currentItem !== null) {
+                ListView.view.currentItem.hideDeleteButton(true)
+            }
             ListView.view.currentIndex = index
         }
     }
