@@ -181,7 +181,7 @@ MouseArea {
                             source: "qrc:/res/setting.png"
                         }
                         onClicked: {
-//                            selectTypeDialog.open()
+                            editTypDialog.open();
                         }
                     }
                 }
@@ -309,15 +309,12 @@ MouseArea {
                     anchors.right: parent.right
                     anchors.rightMargin: Config.margin
                     onClicked: {
-                        hide()
-
-                        // TODO save data
-//                        amountInput.text
+                        hide();
 
                         infoManager.addRecord(inOrOutType, typeContent.parentId,
                                               typeContent.typeId, dateTxt.text,
                                               amountInput.text * 1.0,
-                                              remarkInput.text)
+                                              remarkInput.text);
                     }
 
                     Text{
@@ -394,6 +391,18 @@ MouseArea {
             typeContent.text = typeName
             typeContent.typeId = typeId
             typeContent.parentId = parentId
+        }
+    }
+
+    KContainerDialog {
+        id: editTypDialog
+        dialogWidth: parent.width*4/5
+        dialogHeight: parent.height/2
+        content: EditType {
+        }
+
+        onAccepted: {
+            // TODO refresh type data
         }
     }
 

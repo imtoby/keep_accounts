@@ -9,6 +9,7 @@ KBaseDialog {
     property int dialogWidth: baseDialog.width * 0.8
     property int dialogHeight: dialogWidth * 0.8
     property string title: qsTr("")
+    property Component content: null
 
     signal accepted()
     signal rejected()
@@ -47,14 +48,11 @@ KBaseDialog {
             anchors.bottom: cancelBtn.top
             anchors.margins: 20
 
-//            YearMonthPicker {
-//                id: yearMonthPicker
-//                width: parent.width
-//                height: parent.height
-//                anchors.horizontalCenter: parent.horizontalCenter
-//                month: baseDialog.month
-//                year: baseDialog.year
-//            }
+            Loader {
+                width: parent.width
+                height: parent.height
+                sourceComponent: content
+            }
         }
 
         KButton {
