@@ -91,6 +91,9 @@ InfoManager::InfoManager(QObject *parent)
     connect(d->worker, &Worker::deleteRecordFinished,
             this, &InfoManager::doDeleteRecordFinished);
 
+    connect(this, &InfoManager::refreshSelectTypeData, this,
+            &InfoManager::initSelectTypeData);
+
     d->workerThread.start();
 }
 
@@ -201,30 +204,35 @@ void InfoManager::initTypeData()
         TopOutModel->clear();
         TopOutModel->set(&infos);
 
-        Q_D(InfoManager);
-
-        d->selectOutTypeModel->clear();
-        for (int i=0; i<TopOutModel->count(); ++i) {
-            TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopOutModel->get(i));
-            d->selectOutTypeModel->append(typeInfo);
-            QObjectList infos = KA_DB->getTypeInfos(KA::OUT, this,
-                                                    typeInfo->typeId());
-            d->selectOutTypeModel->appendList(&infos);
-        }
-
-        d->selectInTypeModel->clear();
-        for (int i=0; i<TopInModel->count(); ++i) {
-            TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopInModel->get(i));
-            d->selectInTypeModel->append(typeInfo);
-            QObjectList infos = KA_DB->getTypeInfos(KA::IN, this,
-                                                    typeInfo->typeId());
-            d->selectInTypeModel->appendList(&infos);
-        }
+        initSelectTypeData();
 
         INIT_TYPE_INFO_FINISHED = true;
     }
 
     emit initTypeFinished();
+}
+
+void InfoManager::initSelectTypeData()
+{
+    Q_D(InfoManager);
+
+    d->selectOutTypeModel->clear();
+    for (int i=0; i<TopOutModel->count(); ++i) {
+        TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopOutModel->get(i));
+        d->selectOutTypeModel->append(typeInfo);
+        QObjectList infos = KA_DB->getTypeInfos(KA::OUT, this,
+                                                typeInfo->typeId());
+        d->selectOutTypeModel->appendList(&infos);
+    }
+
+    d->selectInTypeModel->clear();
+    for (int i=0; i<TopInModel->count(); ++i) {
+        TypeInfo* typeInfo = qobject_cast<TypeInfo*>(TopInModel->get(i));
+        d->selectInTypeModel->append(typeInfo);
+        QObjectList infos = KA_DB->getTypeInfos(KA::IN, this,
+                                                typeInfo->typeId());
+        d->selectInTypeModel->appendList(&infos);
+    }
 }
 
 void InfoManager::doAddType(const QString &typeName, int type,

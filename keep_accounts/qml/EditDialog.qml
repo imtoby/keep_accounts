@@ -401,8 +401,8 @@ MouseArea {
         content: EditType {
         }
 
-        onAccepted: {
-            // TODO refresh type data
+        onClosed: {
+            infoManager.refreshSelectTypeData();
         }
     }
 

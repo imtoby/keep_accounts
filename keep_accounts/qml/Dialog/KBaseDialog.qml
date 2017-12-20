@@ -79,8 +79,9 @@ Item {
         property bool opened: false
 
         function cancel() {
-            opened = false
-            canceled()
+            opened = false;
+            canceled();
+            closed();
         }
     }
 

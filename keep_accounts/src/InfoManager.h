@@ -98,8 +98,11 @@ signals:
     void deleteRecord(quint64 millonSecs);
     void deleteRecordFinished();
 
+    void refreshSelectTypeData();
+
 private slots:
     void initTypeData();
+    void initSelectTypeData();
     void doAddType(const QString& typeName, int type, const QString& parentId,
                    const QString& icon = QString());
     void doAddTypeFinished(TypeInfo* info, int type,
