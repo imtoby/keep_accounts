@@ -365,12 +365,22 @@ MouseArea {
                 from: ""; to: "calendar"
                 NumberAnimation { properties: "opacity"; duration: 400 }
                 NumberAnimation { properties: "anchors.leftMargin"; duration: 400 }
-                ScriptAction{script: { contentBackground.clip = false }}
+                ScriptAction{
+                    script: {
+                        contentBackground.clip = false;
+                        kernalArea.visible = false;
+                    }
+                }
             },Transition {
                 from: "calendar"; to: ""
                 NumberAnimation { properties: "opacity"; duration: 400 }
                 NumberAnimation { properties: "anchors.leftMargin"; duration: 400 }
-                ScriptAction{script: { contentBackground.clip = true }}
+                ScriptAction{
+                    script: {
+                        contentBackground.clip = true;
+                        kernalArea.visible = true;
+                    }
+                }
             }
         ]
 

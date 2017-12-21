@@ -34,9 +34,11 @@ Item {
         }
         ListView {
             id: monthView
+            property int year: -1
+            property int month: -1
             anchors.fill: parent
             anchors.margins: Config.lineWidth
-            model: infoManager.recordModel()
+            model: infoManager.recordModel(year, month)
             clip: true
             ScrollDecorator{
                 flickableItem: parent
@@ -135,6 +137,8 @@ Item {
         onAccepted: {
             headBackground.year = year;
             headBackground.month = month;
+            monthView.year = year;
+            monthView.month = month;
         }
 
         onRejected: {

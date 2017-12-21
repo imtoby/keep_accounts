@@ -174,8 +174,15 @@ void InfoManager::setTypeName(int type, const QString &typeId,
     }
 }
 
-RecordModel *InfoManager::recordModel()
+RecordModel *InfoManager::recordModel(int year, int month)
 {
+    if (-1 == year && -1 == month) {
+        return CurrentRecordModel;
+    }
+
+    QObjectList datas = KA_DB->getRecordItems(year, month, this);
+    CurrentRecordModel->clear();
+    CurrentRecordModel->set(&datas);
     return CurrentRecordModel;
 }
 

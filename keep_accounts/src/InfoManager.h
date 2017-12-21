@@ -72,7 +72,7 @@ public:
                                  const QString& parentId,
                                  const QString& typeName);
 
-    Q_INVOKABLE RecordModel* recordModel();
+    Q_INVOKABLE RecordModel* recordModel(int year = -1, int month = -1);
 
 private:
     // parentId could not equals KA::TOP_TYPE_ID
