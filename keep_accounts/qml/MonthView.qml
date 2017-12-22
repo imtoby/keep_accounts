@@ -10,7 +10,6 @@ Item {
         onClicked: {
             switch(index){
             case Config.indexNewAccount:
-                editDialog.clearInputFocus();
                 editDialog.show();
                 break;
             case Config.indexMonth:
@@ -109,6 +108,10 @@ Item {
 
                 onDeleteButtonClicked: {
                     infoManager.deleteRecord(model.modelData.millonSecs)
+                }
+
+                onContentRectangleClicked: {
+                    editDialog.show();
                 }
             }
             onMovementStarted: {

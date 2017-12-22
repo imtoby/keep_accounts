@@ -8,6 +8,8 @@ MouseArea {
     anchors.fill: parent
     enabled: false
 
+    readonly property bool isAddRecord: backgroundObj.isAddRecord
+
     readonly property bool isExpenses: typeContainer.isExpensesType
 
     readonly property int inOrOutType:
@@ -15,12 +17,18 @@ MouseArea {
 
     property alias dateText: dateTxt.text
 
-    function show(){
-        state = "show"
+    function show(isAddRecord, params) {
+        backgroundObj.isAddRecord
+                = (typeof isAddRecord != "undefined") ? isAddRecord : true;
+        if (typeof params != "undefined") {
+
+        }
+        clearInputFocus();
+        state = "show";
     }
 
-    function hide(){
-        state = ""
+    function hide() {
+        state = "";
     }
 
     function clearInputFocus(){
@@ -56,6 +64,7 @@ MouseArea {
 
     Rectangle{
         id: backgroundObj
+        property bool isAddRecord: true
         anchors.fill: parent
         color: "black"
         opacity: 0
@@ -257,7 +266,7 @@ MouseArea {
                         horizontalAlignment: remarkInput.horizontalAlignment
                         verticalAlignment: remarkInput.verticalAlignment
                         clip: true
-                        text: "备注"
+                        text: "描述"
                         Behavior on opacity { NumberAnimation { duration: 200 } }
                     }
                 }
