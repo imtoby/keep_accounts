@@ -21,7 +21,13 @@ MouseArea {
         backgroundObj.isAddRecord
                 = (typeof isAddRecord != "undefined") ? isAddRecord : true;
         if (typeof params != "undefined") {
-
+            typeContainer.isExpensesType = (params.type === Config.out_type);
+            dateTxt.text = (params.year + Config.dateSeparator
+                            + params.month + Config.dateSeparator
+                            + params.day);
+            amountInput.text = params.amount;
+            remarkInput.text = params.note;
+            typeContent.text = params.childType;
         }
         clearInputFocus();
         state = "show";

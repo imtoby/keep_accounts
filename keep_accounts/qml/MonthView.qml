@@ -111,7 +111,20 @@ Item {
                 }
 
                 onContentRectangleClicked: {
-                    editDialog.show();
+                    editDialog.show(false, {
+                                        "millonSecs":
+                                        model.modelData.millonSecs,
+                                        "amount": model.modelData.amount,
+                                        "type": model.modelData.type,
+                                        "year": model.modelData.year,
+                                        "month": model.modelData.month,
+                                        "day": model.modelData.day,
+                                        "parentType":
+                                        model.modelData.parentType,
+                                        "childType": model.modelData.childType,
+                                        "note": model.modelData.note,
+                                        "icon": model.modelData.icon
+                                    });
                 }
             }
             onMovementStarted: {
