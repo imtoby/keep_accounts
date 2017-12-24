@@ -18,6 +18,7 @@ QtObject{
     readonly property color newAccountColor:    "#FFAD00"
     readonly property color deleteColor:        "#FC635E"
     readonly property color deletePressedColor: "#80FC635E"
+    readonly property color describeColor:      "#666666"
 
     ///////////////////// Button index ///////////////////////
     readonly property int indexIncome:      0x00
@@ -56,5 +57,19 @@ QtObject{
 
     function bound(min, value, max) {
         return Math.max(min, Math.min(value, max));
+    }
+
+    function weekdayString(year, month, day) {
+        var w = new Date(year, month - 1, day).getDay();
+        console.log("ZDS========>", w);
+        switch(w) {
+        case 1: return "周一";
+        case 2: return "周二";
+        case 3: return "周三";
+        case 4: return "周四";
+        case 5: return "周五";
+        case 6: return "周六";
+        default: return "周日";
+        }
     }
 }

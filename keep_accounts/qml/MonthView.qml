@@ -51,31 +51,68 @@ Item {
                 }
                 text: qsTr("本月暂无记录，点击 \"新增记录\" 添加新的记录")
             }
+
             delegate: SlideLeftToDeleteDelegate {
                 width: background.width - Config.margin * 2
                 height: Config.cellHeight
                 deleteButtonColor: Config.deleteColor
                 deleteButtonPressedColor: Config.deletePressedColor
+
                 Text {
-                    id: content
-                    width: parent.width*3/5
+                    id: dateTxt
+                    width: 50
                     height: parent.height/2
                     anchors.left: parent.left
                     anchors.leftMargin: Config.margin * 2
                     verticalAlignment: Text.AlignBottom
-                    text: model.modelData.note
+                    font.pointSize: 16
+                    text: model.modelData.day + "日"
                 }
                 Text {
-                    id: dateTxt
-                    width: parent.width*3/5
+                    id: weekday
+                    width: dateTxt.width
                     height: parent.height/2
                     anchors.left: parent.left
                     anchors.leftMargin: Config.margin * 2
                     anchors.bottom: parent.bottom
                     verticalAlignment: Text.AlignVCenter
-                    text: model.modelData.year + Config.dateSeparator +
-                          model.modelData.month + Config.dateSeparator +
-                          model.modelData.day
+                    color: Config.describeColor
+                    text: Config.weekdayString(model.modelData.year,
+                                               model.modelData.month,
+                                               model.modelData.day)
+                }
+
+                Rectangle {
+                    id: dateDiv
+                    width: Config.lineWidth
+                    height: parent.height - Config.margin * 2
+                    color: Config.lineColor
+                    anchors.left: dateTxt.right
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    id: content
+                    width: parent.width*3/5
+                    height: parent.height/2
+                    anchors.left: dateDiv.right
+                    anchors.leftMargin: Config.margin * 2
+                    verticalAlignment: Text.AlignBottom
+                    font.pointSize: 16
+                    text: ((model.modelData.parentType !== Config.topTypeId) ?
+                              (model.modelData.parentType + "-") : "") +
+                              model.modelData.childType
+                }
+                Text {
+                    id: describe
+                    width: parent.width*3/5
+                    height: parent.height/2
+                    anchors.left: dateDiv.right
+                    anchors.leftMargin: Config.margin * 2
+                    anchors.bottom: parent.bottom
+                    verticalAlignment: Text.AlignVCenter
+                    color: Config.describeColor
+                    text: model.modelData.note
                 }
                 Text {
                     id: amountTxt
@@ -85,7 +122,10 @@ Item {
                     anchors.rightMargin: Config.margin * 2
                     horizontalAlignment: Text.AlignRight
                     verticalAlignment: Text.AlignVCenter
-                    text: model.modelData.amount
+                    font.pointSize: 18
+                    color: model.modelData.type == Config.out_type ?
+                               Config.expensesColor : Config.incomeColor
+                    text: model.modelData.amount.toFixed(2)
                 }
                 ///////line//////
                 Rectangle{
