@@ -28,6 +28,7 @@ MouseArea {
             amountInput.text = params.amount;
             remarkInput.text = params.note;
             typeContent.text = params.childType;
+            backgroundObj.millonSecs = params.millonSecs;
         }
         clearInputFocus();
         state = "show";
@@ -71,6 +72,7 @@ MouseArea {
     Rectangle{
         id: backgroundObj
         property bool isAddRecord: true
+        property double millonSecs: 0
         anchors.fill: parent
         color: "black"
         opacity: 0
@@ -326,10 +328,21 @@ MouseArea {
                     onClicked: {
                         hide();
 
-                        infoManager.addRecord(inOrOutType, typeContent.parentId,
-                                              typeContent.typeId, dateTxt.text,
-                                              amountInput.text * 1.0,
-                                              remarkInput.text);
+                        if (isAddRecord) {
+                            infoManager.addRecord(inOrOutType,
+                                                  typeContent.parentId,
+                                                  typeContent.typeId,
+                                                  dateTxt.text,
+                                                  amountInput.text * 1.0,
+                                                  remarkInput.text);
+                        } else {
+                            infoManager.updateRecord(inOrOutType,
+                                                     typeContent.parentId,
+                                                     typeContent.typeId,
+                                                     backgroundObj.millonSecs,
+                                                     amountInput.text * 1.0,
+                                                     remarkInput.text);
+                        }
                     }
 
                     Text{

@@ -44,6 +44,11 @@ signals:
           , const QString& icon = QString());
     void addRecordFinished(RecordItem* item, int type, const QString& parentId);
     void deleteRecordFinished(quint64 millonSecs);
+
+    void updateRecord(int type, const QString& parentId, const QString& typeId
+                      , quint64 millonSecs, double amount
+                      , const QString& note = QString()
+            , const QString& icon = QString());
 };
 
 class InfoManager : public QObject
@@ -99,6 +104,11 @@ signals:
     void deleteRecordFinished();
 
     void refreshSelectTypeData();
+
+    void updateRecord(int type, const QString& parentId, const QString& typeId
+                      , quint64 millonSecs, double amount
+                      , const QString& note = QString()
+            , const QString& icon = QString());
 
 private slots:
     void initTypeData();

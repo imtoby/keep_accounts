@@ -49,7 +49,10 @@ Item {
                 Behavior on opacity {
                     NumberAnimation { duration: 200 }
                 }
-                text: qsTr("本月暂无记录，点击 \"新增记录\" 添加新的记录")
+                text: qsTr("本月暂无记录，点击 \"<a href=\"www.toby.com\">新增记录</a>\" 添加新的记录")
+                onLinkActivated: {
+                    editDialog.show();
+                }
             }
 
             delegate: SlideLeftToDeleteDelegate {
@@ -67,6 +70,8 @@ Item {
                     verticalAlignment: Text.AlignBottom
                     font.pointSize: 16
                     text: model.modelData.day + "日"
+                    color: model.modelData.type == Config.out_type ?
+                               Config.expensesColor : Config.incomeColor
                 }
                 Text {
                     id: weekday

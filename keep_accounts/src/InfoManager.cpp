@@ -94,6 +94,8 @@ InfoManager::InfoManager(QObject *parent)
     connect(this, &InfoManager::refreshSelectTypeData, this,
             &InfoManager::initSelectTypeData);
 
+    connect(this, &InfoManager::updateRecord, d->worker, &Worker::updateRecord);
+
     d->workerThread.start();
 }
 
