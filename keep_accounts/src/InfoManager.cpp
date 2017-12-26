@@ -94,7 +94,12 @@ InfoManager::InfoManager(QObject *parent)
     connect(this, &InfoManager::refreshSelectTypeData, this,
             &InfoManager::initSelectTypeData);
 
-    connect(this, &InfoManager::updateRecord, d->worker, &Worker::updateRecord);
+    connect(this, &InfoManager::updateRecord, this,
+            &InfoManager::doUpdateRecord);
+    connect(d->worker, &Worker::updateRecord, d->worker,
+            &Worker::doUpdateRecord);
+    connect(d->worker, &Worker::updateRecordFinished, this,
+            &InfoManager::doUpdateRecordFinished);
 
     d->workerThread.start();
 }
@@ -344,6 +349,26 @@ void InfoManager::doDeleteRecordFinished(quint64 millonSecs)
     }
 }
 
+void InfoManager::doUpdateRecord(int recordIndex, int type,
+                                 const QString &parentId, const QString &typeId,
+                                 const QString &dateTime, double amount,
+                                 const QString &note, const QString &icon)
+{
+    Q_D(InfoManager);
+    RecordItem *item
+            = qobject_cast<RecordItem*>(CurrentRecordModel->get(recordIndex));
+    emit d->worker->updateRecord(item, recordIndex, type, parentId, typeId,
+                                 dateTime, amount, note, icon);
+}
+
+void InfoManager::doUpdateRecordFinished(RecordItem *item, int recordIndex)
+{
+    if (NULL != CurrentRecordModel) {
+        CurrentRecordModel->replace(recordIndex, item);
+        emit updateRecordFinished();
+    }
+}
+
 void InfoManagerPrivate::init()
 {
     Q_Q(InfoManager);
@@ -441,6 +466,46 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
                          const QString &typeId, const QString &dateTime,
                          double amount, const QString &note, const QString &icon)
 {
+    setRecordItemData(item, type, parentId, typeId, dateTime, amount, note, icon);
+
+    bool success = KA_DB->addRecordData(item);
+
+    qDebug() << __FUNCTION__ << success;
+
+    if (success) {
+        emit addRecordFinished(item, type, parentId);
+    }
+}
+
+void Worker::doDeleteRecord(quint64 millonSecs)
+{
+    bool success = KA_DB->deleteRecord(millonSecs);
+    if (success) {
+        emit deleteRecordFinished(millonSecs);
+    }
+}
+
+void Worker::doUpdateRecord(RecordItem *item, int recordIndex, int type,
+                            const QString &parentId, const QString &typeId,
+                            const QString &dateTime, double amount,
+                            const QString &note, const QString &icon)
+{
+    setRecordItemData(item, type, parentId, typeId, dateTime, amount, note, icon);
+
+    bool success = KA_DB->addRecordData(item);
+
+    qDebug() << __FUNCTION__ << success;
+
+    if (success) {
+        emit updateRecordFinished(item, recordIndex);
+    }
+}
+
+void Worker::setRecordItemData(RecordItem *item, int type,
+                               const QString &parentId, const QString &typeId,
+                               const QString &dateTime, double amount,
+                               const QString &note, const QString &icon)
+{
     item->setType(type);
     item->setAmount(amount);
     item->setNote(note);
@@ -467,21 +532,4 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
 
     currentDateTime.setDate(QDate(item->year(), item->month(), item->day()));
     item->setDateTime(currentDateTime.toString(KA::DATE_TIME_FORMAT));
-
-
-    bool success = KA_DB->addRecordData(item);
-
-    qDebug() << __FUNCTION__ << success;
-
-    if (success) {
-        emit addRecordFinished(item, type, parentId);
-    }
-}
-
-void Worker::doDeleteRecord(quint64 millonSecs)
-{
-    bool success = KA_DB->deleteRecord(millonSecs);
-    if (success) {
-        emit deleteRecordFinished(millonSecs);
-    }
 }

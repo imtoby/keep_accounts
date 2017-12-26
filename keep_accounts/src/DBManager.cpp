@@ -30,10 +30,11 @@ DBManager::~DBManager()
 {
 }
 
-void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
+bool DBManager::updateRecordData(quint64 millonSecs, const QString &key,
                                  const QString &value)
 {
     qDebug() << __FUNCTION__;
+    bool success = false;
     if (KA::RECORD_ITEM_CONTENT.contains(key)) {
 
         QSqlDatabase db = database();
@@ -55,6 +56,8 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
 
             if(query.lastError().isValid()){
                 qDebug() << __FUNCTION__ << query.lastError();
+            } else {
+                success = false;
             }
 
             query.clear();
@@ -64,6 +67,32 @@ void DBManager::updateRecordData(const QString &millonSecs, const QString &key,
     } else {
         qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
     }
+    return success;
+}
+
+bool DBManager::updateRecordData(const RecordItem * const recordItem)
+{
+    qDebug() << __FUNCTION__;
+    return updateRecordData(recordItem->millonSecs(), KA::DATE_TIME,
+                            recordItem->dateTime())
+            && updateRecordData(recordItem->millonSecs(), KA::YEAR,
+                                QString::number(recordItem->year()))
+            && updateRecordData(recordItem->millonSecs(), KA::MONTH,
+                                QString::number(recordItem->month()))
+            && updateRecordData(recordItem->millonSecs(), KA::DAY,
+                                QString::number(recordItem->day()))
+            && updateRecordData(recordItem->millonSecs(), KA::TYPE,
+                                QString::number(recordItem->type()))
+            && updateRecordData(recordItem->millonSecs(), KA::PARENT_TYPE,
+                                recordItem->parentType())
+            && updateRecordData(recordItem->millonSecs(), KA::CHILD_TYPE,
+                                recordItem->childType())
+            && updateRecordData(recordItem->millonSecs(), KA::AMOUNT,
+                                QString::number(recordItem->amount()))
+            && updateRecordData(recordItem->millonSecs(), KA::NOTE,
+                                recordItem->note())
+            && updateRecordData(recordItem->millonSecs(), KA::ICON,
+                                recordItem->icon());
 }
 
 QObjectList DBManager::getRecordItems(int year, int month, QObject *parent)

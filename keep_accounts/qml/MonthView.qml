@@ -156,7 +156,7 @@ Item {
                 }
 
                 onContentRectangleClicked: {
-                    editDialog.show(false, {
+                    editDialog.show(false, index, {
                                         "millonSecs":
                                         model.modelData.millonSecs,
                                         "amount": model.modelData.amount,

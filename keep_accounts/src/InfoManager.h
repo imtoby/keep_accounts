@@ -28,6 +28,12 @@ public slots:
             , const QString& icon = QString());
     void doDeleteRecord(quint64 millonSecs);
 
+    void doUpdateRecord(RecordItem* item, int recordIndex, int type
+                        , const QString& parentId, const QString& typeId
+                        , const QString& dateTime, double amount
+                        , const QString& note = QString()
+              , const QString& icon = QString());
+
 signals:
     void addType(TypeInfo* info, const QString& typeName,
                  int type, const QString& parentId,
@@ -45,10 +51,18 @@ signals:
     void addRecordFinished(RecordItem* item, int type, const QString& parentId);
     void deleteRecordFinished(quint64 millonSecs);
 
-    void updateRecord(int type, const QString& parentId, const QString& typeId
-                      , quint64 millonSecs, double amount
+    void updateRecord(RecordItem* item, int recordIndex, int type
+                      , const QString& parentId, const QString& typeId
+                      , const QString& dateTime, double amount
                       , const QString& note = QString()
             , const QString& icon = QString());
+    void updateRecordFinished(RecordItem* item, int recordIndex);
+
+private:
+    void setRecordItemData(RecordItem* item, int type, const QString& parentId
+                           , const QString& typeId, const QString& dateTime
+                           , double amount, const QString& note = QString()
+               , const QString& icon = QString());
 };
 
 class InfoManager : public QObject
@@ -105,10 +119,11 @@ signals:
 
     void refreshSelectTypeData();
 
-    void updateRecord(int type, const QString& parentId, const QString& typeId
-                      , quint64 millonSecs, double amount
-                      , const QString& note = QString()
+    void updateRecord(int recordIndex, int type, const QString& parentId
+                      , const QString& typeId, const QString& dateTime
+                      , double amount, const QString& note = QString()
             , const QString& icon = QString());
+    void updateRecordFinished();
 
 private slots:
     void initTypeData();
@@ -129,6 +144,11 @@ private slots:
     void doAddRecordFinished(RecordItem* item);
     void doDeleteRecordFinished(quint64 millonSecs);
 
+    void doUpdateRecord(int recordIndex, int type, const QString& parentId
+                        , const QString& typeId, const QString& dateTime
+                        , double amount, const QString& note = QString()
+            , const QString& icon = QString());
+    void doUpdateRecordFinished(RecordItem* item, int recordIndex);
 
 private:
     QScopedPointer<InfoManagerPrivate> d_ptr;

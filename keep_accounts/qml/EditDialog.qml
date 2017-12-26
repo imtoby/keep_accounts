@@ -17,9 +17,15 @@ MouseArea {
 
     property alias dateText: dateTxt.text
 
-    function show(isAddRecord, params) {
+    function show(isAddRecord, recordIndex, params) {
         backgroundObj.isAddRecord
                 = (typeof isAddRecord != "undefined") ? isAddRecord : true;
+        if (typeof recordIndex != "undefined") {
+            backgroundObj.recordIndex = recordIndex;
+            console.log("recordIndex ======= ", recordIndex);
+        } else {
+            backgroundObj.recordIndex = -1;
+        }
         if (typeof params != "undefined") {
             typeContainer.isExpensesType = (params.type === Config.out_type);
             dateTxt.text = (params.year + Config.dateSeparator
@@ -73,6 +79,7 @@ MouseArea {
         id: backgroundObj
         property bool isAddRecord: true
         property double millonSecs: 0
+        property int recordIndex: -1
         anchors.fill: parent
         color: "black"
         opacity: 0
