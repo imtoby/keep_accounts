@@ -61,7 +61,6 @@ QtObject{
 
     function weekdayString(year, month, day) {
         var w = new Date(year, month - 1, day).getDay();
-        console.log("ZDS========>", w);
         switch(w) {
         case 1: return "周一";
         case 2: return "周二";

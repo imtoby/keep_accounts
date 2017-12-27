@@ -343,10 +343,11 @@ MouseArea {
                                                   amountInput.text * 1.0,
                                                   remarkInput.text);
                         } else {
-                            infoManager.updateRecord(inOrOutType,
+                            infoManager.updateRecord(backgroundObj.recordIndex,
+                                                     inOrOutType,
                                                      typeContent.parentId,
                                                      typeContent.typeId,
-                                                     backgroundObj.millonSecs,
+                                                     dateTxt.text,
                                                      amountInput.text * 1.0,
                                                      remarkInput.text);
                         }

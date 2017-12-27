@@ -354,6 +354,7 @@ void InfoManager::doUpdateRecord(int recordIndex, int type,
                                  const QString &dateTime, double amount,
                                  const QString &note, const QString &icon)
 {
+    qDebug() << __FUNCTION__;
     Q_D(InfoManager);
     RecordItem *item
             = qobject_cast<RecordItem*>(CurrentRecordModel->get(recordIndex));
@@ -363,6 +364,7 @@ void InfoManager::doUpdateRecord(int recordIndex, int type,
 
 void InfoManager::doUpdateRecordFinished(RecordItem *item, int recordIndex)
 {
+    qDebug() << __FUNCTION__;
     if (NULL != CurrentRecordModel) {
         CurrentRecordModel->replace(recordIndex, item);
         emit updateRecordFinished();
@@ -468,6 +470,9 @@ void Worker::doAddRecord(RecordItem* item, int type, const QString &parentId,
 {
     setRecordItemData(item, type, parentId, typeId, dateTime, amount, note, icon);
 
+    QDateTime currentDateTime = QDateTime::currentDateTime();
+    item->setMillonSecs(currentDateTime.toMSecsSinceEpoch());
+
     bool success = KA_DB->addRecordData(item);
 
     qDebug() << __FUNCTION__ << success;
@@ -518,6 +523,7 @@ void Worker::setRecordItemData(RecordItem *item, int type,
     item->setChildType(KA_DB->getTypeName(typeId));
 
     QStringList dateInfos = dateTime.split(KA::DATE_SEPARATOR);
+    qDebug() << __FUNCTION__ << dateTime << dateInfos.size();
     if (dateInfos.size() > 0) {
         QString value = dateInfos.at(0);
         item->setYear(value.toInt());
@@ -528,7 +534,6 @@ void Worker::setRecordItemData(RecordItem *item, int type,
     }
 
     QDateTime currentDateTime = QDateTime::currentDateTime();
-    item->setMillonSecs(currentDateTime.toMSecsSinceEpoch());
 
     currentDateTime.setDate(QDate(item->year(), item->month(), item->day()));
     item->setDateTime(currentDateTime.toString(KA::DATE_TIME_FORMAT));
