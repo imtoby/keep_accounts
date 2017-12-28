@@ -193,6 +193,11 @@ RecordModel *InfoManager::recordModel(int year, int month)
     return CurrentRecordModel;
 }
 
+QString InfoManager::getTypeName(const QString &typeId) const
+{
+    return KA_DB->getTypeName(typeId);
+}
+
 QString InfoManager::getParentTypeName(int type, const QString &parentId) const
 {
     TypeInfo* info = NULL;
@@ -497,7 +502,7 @@ void Worker::doUpdateRecord(RecordItem *item, int recordIndex, int type,
 {
     setRecordItemData(item, type, parentId, typeId, dateTime, amount, note, icon);
 
-    bool success = KA_DB->addRecordData(item);
+    bool success = KA_DB->updateRecordData(item);
 
     qDebug() << __FUNCTION__ << success;
 
@@ -515,12 +520,8 @@ void Worker::setRecordItemData(RecordItem *item, int type,
     item->setAmount(amount);
     item->setNote(note);
     item->setIcon(icon);
-    if (KA::TOP_TYPE_ID != parentId) {
-        item->setParentType(KA_DB->getTypeName(parentId));
-    } else {
-        item->setParentType(KA::TOP_TYPE_ID);
-    }
-    item->setChildType(KA_DB->getTypeName(typeId));
+    item->setParentType(parentId);
+    item->setChildType(typeId);
 
     QStringList dateInfos = dateTime.split(KA::DATE_SEPARATOR);
     qDebug() << __FUNCTION__ << dateTime << dateInfos.size();

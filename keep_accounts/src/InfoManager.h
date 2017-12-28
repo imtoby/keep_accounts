@@ -93,6 +93,8 @@ public:
 
     Q_INVOKABLE RecordModel* recordModel(int year = -1, int month = -1);
 
+    Q_INVOKABLE QString getTypeName(const QString& typeId) const;
+
 private:
     // parentId could not equals KA::TOP_TYPE_ID
     QString getParentTypeName(int type, const QString& parentId) const;

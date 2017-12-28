@@ -22,7 +22,6 @@ MouseArea {
                 = (typeof isAddRecord != "undefined") ? isAddRecord : true;
         if (typeof recordIndex != "undefined") {
             backgroundObj.recordIndex = recordIndex;
-            console.log("recordIndex ======= ", recordIndex);
         } else {
             backgroundObj.recordIndex = -1;
         }
@@ -35,6 +34,8 @@ MouseArea {
             remarkInput.text = params.note;
             typeContent.text = params.childType;
             backgroundObj.millonSecs = params.millonSecs;
+            typeContent.parentId = params.parentType;
+            typeContent.typeId = params.childType;
         }
         clearInputFocus();
         state = "show";
@@ -80,6 +81,8 @@ MouseArea {
         property bool isAddRecord: true
         property double millonSecs: 0
         property int recordIndex: -1
+        property string childType: ""
+        property string parentType: ""
         anchors.fill: parent
         color: "black"
         opacity: 0
@@ -434,9 +437,15 @@ MouseArea {
         id: selectTypeDialog
         inOrOutType: editDialog.inOrOutType
         onClicked: {
-            typeContent.text = typeName
-            typeContent.typeId = typeId
-            typeContent.parentId = parentId
+            typeContent.typeId = infoManager.getTypeName(typeId);
+            var name = typeContent.typeId;
+            if (parentId != Config.topTypeId) {
+                typeContent.parentId = infoManager.getTypeName(parentId);
+                name = name + "-" + typeContent.typeId;
+            } else {
+                typeContent.parentId = Config.topTypeId;
+            }
+            typeContent.text = name;
         }
     }
 
