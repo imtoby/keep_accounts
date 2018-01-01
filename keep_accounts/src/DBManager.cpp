@@ -33,37 +33,40 @@ DBManager::~DBManager()
 bool DBManager::updateRecordData(quint64 millonSecs, const QString &key,
                                  const QString &value)
 {
-    qDebug() << __FUNCTION__;
+    qDebug() << __FUNCTION__ << millonSecs;
     bool success = false;
     if (KA::RECORD_ITEM_CONTENT.contains(key)) {
-
         QSqlDatabase db = database();
         if(db.open()){
+            db.transaction();
             QSqlQuery query(db);
 
             const QString table_records_update("update "
                                                + KA::DATABASE_TABLE_NAME_RECORDS
-                                               + " set " + key + "=? where "
-                                               + KA::MILLON_SECS + "=?");
+                                               + " set " + key + " = :theKey where "
+                                               + KA::MILLON_SECS + " = :theMSecs");
 
             bool check = query.prepare(table_records_update);
 
             if(check){
-                query.bindValue(0, value);
-                query.bindValue(1, millonSecs);
+                query.bindValue(":theKey", value);
+                query.bindValue(":theMSecs", QString::number(millonSecs));
                 query.exec();
             }
 
             if(query.lastError().isValid()){
                 qDebug() << __FUNCTION__ << query.lastError();
+                db.rollback();
             } else {
-                success = false;
+                success = true;
+                db.commit();
             }
 
             query.clear();
             db.close();
+        } else {
+            qDebug() << __FUNCTION__ << db.lastError();
         }
-
     } else {
         qDebug() << __FUNCTION__ << QStringLiteral(" Error: key is not exsit.");
     }
@@ -72,27 +75,48 @@ bool DBManager::updateRecordData(quint64 millonSecs, const QString &key,
 
 bool DBManager::updateRecordData(const RecordItem * const recordItem)
 {
-    qDebug() << __FUNCTION__;
-    return updateRecordData(recordItem->millonSecs(), KA::DATE_TIME,
-                            recordItem->dateTime())
-            && updateRecordData(recordItem->millonSecs(), KA::YEAR,
-                                QString::number(recordItem->year()))
-            && updateRecordData(recordItem->millonSecs(), KA::MONTH,
-                                QString::number(recordItem->month()))
-            && updateRecordData(recordItem->millonSecs(), KA::DAY,
-                                QString::number(recordItem->day()))
-            && updateRecordData(recordItem->millonSecs(), KA::TYPE,
-                                QString::number(recordItem->type()))
-            && updateRecordData(recordItem->millonSecs(), KA::PARENT_TYPE,
-                                recordItem->parentType())
-            && updateRecordData(recordItem->millonSecs(), KA::CHILD_TYPE,
-                                recordItem->childType())
-            && updateRecordData(recordItem->millonSecs(), KA::AMOUNT,
-                                QString::number(recordItem->amount()))
-            && updateRecordData(recordItem->millonSecs(), KA::NOTE,
-                                recordItem->note())
-            && updateRecordData(recordItem->millonSecs(), KA::ICON,
-                                recordItem->icon());
+    bool success = false;
+    success = updateRecordData(recordItem->millonSecs(), KA::DATE_TIME,
+                               recordItem->dateTime());
+    qDebug() << __FUNCTION__ << KA::DATE_TIME << success;
+
+    success = updateRecordData(recordItem->millonSecs(), KA::YEAR,
+                                          QString::number(recordItem->year()));
+    qDebug() << __FUNCTION__ << KA::YEAR << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::MONTH,
+                                          QString::number(recordItem->month()));
+    qDebug() << __FUNCTION__ << KA::MONTH << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::DAY,
+                                          QString::number(recordItem->day()));
+    qDebug() << __FUNCTION__ << KA::DAY << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::TYPE,
+                                          QString::number(recordItem->type()));
+    qDebug() << __FUNCTION__ << KA::TYPE << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::PARENT_TYPE,
+                                          recordItem->parentType());
+    qDebug() << __FUNCTION__ << KA::PARENT_TYPE << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::CHILD_TYPE,
+                                          recordItem->childType());
+    qDebug() << __FUNCTION__ << KA::CHILD_TYPE << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::AMOUNT,
+                                          QString::number(recordItem->amount()));
+    qDebug() << __FUNCTION__ << KA::AMOUNT << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::NOTE,
+                                          recordItem->note());
+    qDebug() << __FUNCTION__ << KA::NOTE << success;
+
+    success = success && updateRecordData(recordItem->millonSecs(), KA::ICON,
+                                          recordItem->icon());
+    qDebug() << __FUNCTION__ << KA::ICON << success;
+
+    return success;
 }
 
 QObjectList DBManager::getRecordItems(int year, int month, QObject *parent)

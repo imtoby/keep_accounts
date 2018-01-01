@@ -62,6 +62,17 @@ KBaseDialog {
                 anchors.horizontalCenter: parent.horizontalCenter
                 month: baseDialog.month
                 year: baseDialog.year
+                Connections {
+                    target: baseDialog
+                    onOpened: {
+                        yearMonthPicker.year = Qt.binding(function(){
+                            return baseDialog.year;
+                        })
+                        yearMonthPicker.month = Qt.binding(function(){
+                            return baseDialog.month;
+                        })
+                    }
+                }
             }
         }
 

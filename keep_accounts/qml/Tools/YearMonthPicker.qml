@@ -35,7 +35,7 @@ Item {
             }
         }
         function initYears() {
-            userOperated = true;
+            userOperated = false;
             var years = new Array;
             for (var i=minYear; i<=maxYear; ++i) {
                 years.push(i);
