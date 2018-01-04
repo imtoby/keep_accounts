@@ -441,6 +441,7 @@ MouseArea {
             var name = typeContent.typeId;
             if (parentId != Config.topTypeId) {
                 typeContent.parentId = infoManager.getTypeName(parentId);
+                name = typeContent.parentId;
                 name = name + "-" + typeContent.typeId;
             } else {
                 typeContent.parentId = Config.topTypeId;
