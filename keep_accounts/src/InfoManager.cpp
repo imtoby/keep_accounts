@@ -48,6 +48,9 @@ public:
         , worker(NULL)
         , selectInTypeModel(NULL)
         , selectOutTypeModel(NULL)
+        , outTotal(0)
+        , inTotal(0)
+        , balance(0)
     {}
 
     void init();
@@ -61,6 +64,9 @@ private:
     Worker *worker;
     TypeModel* selectInTypeModel;
     TypeModel* selectOutTypeModel;
+    double outTotal;
+    double inTotal;
+    double balance;
 };
 
 InfoManager::InfoManager(QObject *parent)
@@ -315,12 +321,26 @@ void InfoManager::doDeleteTypeFinished(int index, int type,
 
 void InfoManager::initRecordData()
 {
+    Q_D(InfoManager);
     if (!INIT_RECORD_DATA_FINISHED) {
         const QDate currentDate = QDate::currentDate();
         QObjectList datas = KA_DB->getRecordItems(
                     currentDate.year(), currentDate.month(), this);
         CurrentRecordModel->clear();
         CurrentRecordModel->set(&datas);
+
+        d->outTotal = 0;
+        for (int i=0; i<CurrentRecordModel->count(); ++i) {
+            RecordItem* item
+                    = qobject_cast<RecordItem*>(CurrentRecordModel->get(i));
+            if (KA::OUT == item->type()) {
+                d->outTotal += item->amount();
+            } else {
+                d->inTotal += item->amount();
+            }
+        }
+
+        d->balance = d->inTotal - d->outTotal;
 
         INIT_RECORD_DATA_FINISHED = true;
     }
@@ -340,15 +360,33 @@ void InfoManager::doAddRecord(int type, const QString &parentId,
 
 void InfoManager::doAddRecordFinished(RecordItem *item)
 {
+    Q_D(InfoManager);
     if (NULL != CurrentRecordModel) {
         CurrentRecordModel->push_front(item);
+        if (KA::OUT == item->type()) {
+            d->outTotal += item->amount();
+        } else {
+            d->inTotal += item->amount();
+        }
+        d->balance = d->inTotal - d->outTotal;
         emit addRecordFinished();
     }
 }
 
 void InfoManager::doDeleteRecordFinished(quint64 millonSecs)
 {
+    Q_D(InfoManager);
     if (NULL != CurrentRecordModel) {
+
+        RecordItem *item = qobject_cast<RecordItem*>(
+                    CurrentRecordModel->getRecordItem(millonSecs));
+        if (KA::OUT == item->type()) {
+            d->outTotal -= item->amount();
+        } else {
+            d->inTotal -= item->amount();
+        }
+        d->balance = d->inTotal - d->outTotal;
+
         CurrentRecordModel->deleteRecord(millonSecs);
         emit deleteRecordFinished();
     }
@@ -369,8 +407,27 @@ void InfoManager::doUpdateRecord(int recordIndex, int type,
 
 void InfoManager::doUpdateRecordFinished(RecordItem *item, int recordIndex)
 {
+    Q_D(InfoManager);
     qDebug() << __FUNCTION__;
     if (NULL != CurrentRecordModel) {
+
+        RecordItem *oldItem = qobject_cast<RecordItem*>(
+                    CurrentRecordModel->get(recordIndex));
+
+        if (KA::OUT == oldItem->type()) {
+            d->outTotal -= oldItem->amount();
+        } else {
+            d->inTotal -= oldItem->amount();
+        }
+
+        if (KA::OUT == item->type()) {
+            d->outTotal += item->amount();
+        } else {
+            d->inTotal += item->amount();
+        }
+
+        d->balance = d->inTotal - d->outTotal;
+
         CurrentRecordModel->replace(recordIndex, item);
         emit updateRecordFinished();
     }

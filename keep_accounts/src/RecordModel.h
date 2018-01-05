@@ -19,6 +19,7 @@ public:
     explicit RecordModel(QObject* parent = nullptr);
     ~RecordModel();
 
+    QObject * getRecordItem(quint64 millonSecs);
     void deleteRecord(quint64 millonSecs);
 
 private:

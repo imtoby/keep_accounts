@@ -7,6 +7,7 @@
  ***************************************************************************/
 #include "RecordModel.h"
 #include "RecordItem.h"
+#include <QDebug>
 
 class RecordModelPrivate
 {
@@ -28,6 +29,17 @@ RecordModel::RecordModel(QObject *parent)
 
 RecordModel::~RecordModel()
 {
+}
+
+QObject *RecordModel::getRecordItem(quint64 millonSecs)
+{
+    QObjectList* list = getAll();
+    for (int i=0; i<list->size(); ++i) {
+        RecordItem* item = qobject_cast<RecordItem*>(list->at(i));
+        if (item->millonSecs() == millonSecs) {
+            return item;
+        }
+    }
 }
 
 void RecordModel::deleteRecord(quint64 millonSecs)
