@@ -204,6 +204,24 @@ QString InfoManager::getTypeName(const QString &typeId) const
     return KA_DB->getTypeName(typeId);
 }
 
+QString InfoManager::incomeTotal() const
+{
+    C_D(InfoManager);
+    return QString::number(d->inTotal);
+}
+
+QString InfoManager::expensesTotal() const
+{
+    C_D(InfoManager);
+    return QString::number(d->outTotal);
+}
+
+QString InfoManager::balanceTotal() const
+{
+    C_D(InfoManager);
+    return QString::number(d->balance);
+}
+
 QString InfoManager::getParentTypeName(int type, const QString &parentId) const
 {
     TypeInfo* info = NULL;
@@ -333,10 +351,14 @@ void InfoManager::initRecordData()
         for (int i=0; i<CurrentRecordModel->count(); ++i) {
             RecordItem* item
                     = qobject_cast<RecordItem*>(CurrentRecordModel->get(i));
-            if (KA::OUT == item->type()) {
-                d->outTotal += item->amount();
+            if (NULL != item) {
+                if (KA::OUT == item->type()) {
+                    d->outTotal += item->amount();
+                } else {
+                    d->inTotal += item->amount();
+                }
             } else {
-                d->inTotal += item->amount();
+                qDebug() << "Error Info: item is NULL";
             }
         }
 
@@ -363,14 +385,18 @@ void InfoManager::doAddRecordFinished(RecordItem *item)
     Q_D(InfoManager);
     if (NULL != CurrentRecordModel) {
         CurrentRecordModel->push_front(item);
-        if (KA::OUT == item->type()) {
-            d->outTotal += item->amount();
+        if (NULL != item) {
+            if (KA::OUT == item->type()) {
+                d->outTotal += item->amount();
+            } else {
+                d->inTotal += item->amount();
+            }
+            d->balance = d->inTotal - d->outTotal;
         } else {
-            d->inTotal += item->amount();
+            qDebug() << "Error Info: item is NULL";
         }
-        d->balance = d->inTotal - d->outTotal;
-        emit addRecordFinished();
     }
+    emit addRecordFinished();
 }
 
 void InfoManager::doDeleteRecordFinished(quint64 millonSecs)
@@ -380,16 +406,20 @@ void InfoManager::doDeleteRecordFinished(quint64 millonSecs)
 
         RecordItem *item = qobject_cast<RecordItem*>(
                     CurrentRecordModel->getRecordItem(millonSecs));
-        if (KA::OUT == item->type()) {
-            d->outTotal -= item->amount();
+        if (NULL != item) {
+            if (KA::OUT == item->type()) {
+                d->outTotal -= item->amount();
+            } else {
+                d->inTotal -= item->amount();
+            }
+            d->balance = d->inTotal - d->outTotal;
         } else {
-            d->inTotal -= item->amount();
+            qDebug() << "Error Info: item is NULL";
         }
-        d->balance = d->inTotal - d->outTotal;
 
         CurrentRecordModel->deleteRecord(millonSecs);
-        emit deleteRecordFinished();
     }
+    emit deleteRecordFinished();
 }
 
 void InfoManager::doUpdateRecord(int recordIndex, int type,
@@ -414,23 +444,27 @@ void InfoManager::doUpdateRecordFinished(RecordItem *item, int recordIndex)
         RecordItem *oldItem = qobject_cast<RecordItem*>(
                     CurrentRecordModel->get(recordIndex));
 
-        if (KA::OUT == oldItem->type()) {
-            d->outTotal -= oldItem->amount();
-        } else {
-            d->inTotal -= oldItem->amount();
-        }
+        if (NULL != oldItem) {
+            if (KA::OUT == oldItem->type()) {
+                d->outTotal -= oldItem->amount();
+            } else {
+                d->inTotal -= oldItem->amount();
+            }
 
-        if (KA::OUT == item->type()) {
-            d->outTotal += item->amount();
-        } else {
-            d->inTotal += item->amount();
-        }
+            if (KA::OUT == item->type()) {
+                d->outTotal += item->amount();
+            } else {
+                d->inTotal += item->amount();
+            }
 
-        d->balance = d->inTotal - d->outTotal;
+            d->balance = d->inTotal - d->outTotal;
+        } else {
+            qDebug() << "Error Info: item is NULL";
+        }
 
         CurrentRecordModel->replace(recordIndex, item);
-        emit updateRecordFinished();
     }
+    emit updateRecordFinished();
 }
 
 void InfoManagerPrivate::init()

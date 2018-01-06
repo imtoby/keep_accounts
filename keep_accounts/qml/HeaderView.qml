@@ -231,4 +231,32 @@ Item {
 
         }
     }
+
+    Connections {
+        id: infoManagerConnections
+        target: infoManager
+        ignoreUnknownSignals: true
+
+        function refreshTotalData() {
+            incomeTotalObj.text = infoManager.incomeTotal();
+            expensesTotalObj.text = infoManager.expensesTotal();
+            amountTotalObj.text = infoManager.balanceTotal();
+        }
+
+        onInitRecordFinished: {
+            infoManagerConnections.refreshTotalData();
+        }
+
+        onAddRecordFinished: {
+            infoManagerConnections.refreshTotalData();
+        }
+
+        onDeleteRecordFinished: {
+            infoManagerConnections.refreshTotalData();
+        }
+
+        onUpdateRecordFinished: {
+            infoManagerConnections.refreshTotalData();
+        }
+    }
 }

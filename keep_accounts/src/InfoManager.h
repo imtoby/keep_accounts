@@ -95,6 +95,12 @@ public:
 
     Q_INVOKABLE QString getTypeName(const QString& typeId) const;
 
+    Q_INVOKABLE QString incomeTotal() const;
+
+    Q_INVOKABLE QString expensesTotal() const;
+
+    Q_INVOKABLE QString balanceTotal() const;
+
 private:
     // parentId could not equals KA::TOP_TYPE_ID
     QString getParentTypeName(int type, const QString& parentId) const;

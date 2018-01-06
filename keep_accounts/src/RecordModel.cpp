@@ -40,6 +40,7 @@ QObject *RecordModel::getRecordItem(quint64 millonSecs)
             return item;
         }
     }
+    return NULL;
 }
 
 void RecordModel::deleteRecord(quint64 millonSecs)
