@@ -431,6 +431,16 @@ void InfoManager::doUpdateRecord(int recordIndex, int type,
     Q_D(InfoManager);
     RecordItem *item
             = qobject_cast<RecordItem*>(CurrentRecordModel->get(recordIndex));
+    if (NULL != CurrentRecordModel) {
+        if (NULL != item) {
+            qDebug() << item->amount();
+            if (KA::OUT == item->type()) {
+                d->outTotal -= item->amount();
+            } else {
+                d->inTotal -= item->amount();
+            }
+        }
+    }
     emit d->worker->updateRecord(item, recordIndex, type, parentId, typeId,
                                  dateTime, amount, note, icon);
 }
@@ -441,16 +451,7 @@ void InfoManager::doUpdateRecordFinished(RecordItem *item, int recordIndex)
     qDebug() << __FUNCTION__;
     if (NULL != CurrentRecordModel) {
 
-        RecordItem *oldItem = qobject_cast<RecordItem*>(
-                    CurrentRecordModel->get(recordIndex));
-
-        if (NULL != oldItem) {
-            if (KA::OUT == oldItem->type()) {
-                d->outTotal -= oldItem->amount();
-            } else {
-                d->inTotal -= oldItem->amount();
-            }
-
+        if (NULL != item) {
             if (KA::OUT == item->type()) {
                 d->outTotal += item->amount();
             } else {
