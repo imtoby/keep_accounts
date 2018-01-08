@@ -384,7 +384,17 @@ void InfoManager::doAddRecordFinished(RecordItem *item)
 {
     Q_D(InfoManager);
     if (NULL != CurrentRecordModel) {
-        CurrentRecordModel->push_front(item);
+        const QString dateTime = item->dateTime();
+        for (int i=0; i<CurrentRecordModel->count(); ++i) {
+            RecordItem* record
+                    = qobject_cast<RecordItem*>(CurrentRecordModel->get(i));
+
+            if (NULL != record && dateTime > record->dateTime()) {
+                CurrentRecordModel->insert(i, item);
+                break;
+            }
+        }
+//        CurrentRecordModel->push_front(item);
         if (NULL != item) {
             if (KA::OUT == item->type()) {
                 d->outTotal += item->amount();

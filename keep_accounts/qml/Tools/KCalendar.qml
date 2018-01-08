@@ -54,7 +54,7 @@ Item{
             borderVisible: false
             dividerVisible: false
             onClicked: {
-                calendarContent.visibleYear = currentIndex + 1901
+                calendarContent.visibleYear = index + 1901
             }
             onClearOtherPop: {
                 monthComboBox.hidePop()
@@ -79,7 +79,7 @@ Item{
             borderVisible: false
             dividerVisible: false
             onClicked: {
-                calendarContent.visibleMonth = currentIndex
+                calendarContent.visibleMonth = index
             }
             onClearOtherPop: {
                 yearComboBox.hidePop()
