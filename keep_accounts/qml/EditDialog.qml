@@ -234,10 +234,11 @@ MouseArea {
                     anchors.rightMargin: Config.margin
                     onClicked: {
                         clearInputFocus()
+                        var currentDate = new Date(dateTxt.text);
+                        calendar.year = currentDate.getFullYear();
+                        calendar.month = currentDate.getMonth() + 1;
+                        calendar.day = currentDate.getDate();
                         contentBackground.state = "calendar"
-                        calendar.selectedDate = Date.fromLocaleString(Config.locale,
-                                                      dateTxt.text,
-                                                      Config.dateFormat)
                     }
 
                     Text{
@@ -374,13 +375,46 @@ MouseArea {
             anchors.left: kernalArea.right
             opacity: 0
 
-            KCalendar{
+            YearMonthDayPicker {
                 id: calendar
-                anchors.fill: parent
+                width: 250
+                height: 220
+                anchors.fill: undefined
+                anchors.centerIn: parent
+            }
 
-                onDoubleClicked: {
-                    dateTxt.text = selectedDate.toLocaleDateString(Config.locale, Config.dateFormat)
-                    contentBackground.state = ""
+            KButton {
+                id: cancelBtn
+                width: parent.width/2
+                height: 50
+                anchors.bottom: parent.bottom
+                Text {
+                    anchors.fill: parent
+                    text: qsTr("取消")
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                onClicked: {
+                    contentBackground.state = "";
+                }
+            }
+
+            KButton {
+                id: okBtn
+                width: parent.width/2
+                height: 50
+                anchors.bottom: parent.bottom
+                anchors.left: cancelBtn.right
+                Text {
+                    anchors.fill: parent
+                    text: qsTr("确定")
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+                }
+                onClicked: {
+                    var selectedDate = new Date(calendar.year, calendar.month - 1, calendar.day);
+                    dateTxt.text = selectedDate.toLocaleDateString(Config.locale, Config.dateFormat);
+                    contentBackground.state = "";
                 }
             }
         }

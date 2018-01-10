@@ -1,7 +1,8 @@
 import QtQuick 2.3
 
-Item {
+Row {
     id: yearMonthDayPicker
+    anchors.fill: parent
     objectName: "YearMonthDayPicker"
 
     property int maxYear: 2050
@@ -61,7 +62,6 @@ Item {
     BasePicker {
         id: monthPicker
         implicitWidth: 60
-        anchors.left: yearPicker.right
         property bool userOperated: false
         Component.onCompleted: {
             initMonths();
@@ -102,7 +102,6 @@ Item {
     BasePicker {
         id: dayPicker
         implicitWidth: 100
-        anchors.left: monthPicker.right
         property bool userOperated: false
         property var locale: Qt.locale("zh_CN")
         Component.onCompleted: {
@@ -122,16 +121,18 @@ Item {
             }
         }
         function initDays() {
-            var monthDays = new Date(year, month, 0);
+            var monthDays = new Date(year, month - 1, 0);
             var days = new Array;
+            var tmpDays = new Array;
             var n = monthDays.getDate();
             var newDay = null;
             for (var i=1; i<=n; ++i) {
-                newDay = new Date(year, month, i);
+                newDay = new Date(year, month - 1, i);
                 days.push(i + " " + newDay.toLocaleDateString(locale, "ddd"));
+                tmpDays.push(i);
             }
             model = days;
-            i = days.indexOf(day);
+            i = tmpDays.indexOf(day);
             if (i > -1) {
                 setCurrentIndex(i);
             }
@@ -171,7 +172,7 @@ Item {
     }
 
     onDayChanged: {
-        var maxDays = new Date(year, month, 0).getDate();
+        var maxDays = new Date(year, month - 1, 0).getDate();
         var newDay = Math.min(Math.max(1, day), maxDays);
         if (!dayPicker.userOperated) {
             dayPicker.setCurrentIndex(newDay - 1);

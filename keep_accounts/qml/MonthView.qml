@@ -191,7 +191,7 @@ Item {
     EditDialog{
         id: editDialog
     }
-    KDatePickerDialog {
+    KYearMonthPickerDialog {
         id: datePickerDialog
         parent: rootPage
 
