@@ -57,6 +57,7 @@ Item {
         id: context
         anchors.centerIn: parent
         enabled: private_data.opened
+        opacity: private_data.opened
         anchors.verticalCenterOffset:  private_data.opened ? 0 : - parent.height
         rotation: private_data.opened ? 0 : 60
 
