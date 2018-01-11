@@ -35,6 +35,7 @@ public slots:
     QObjectList getRecordItems(int year, int month, int type, QObject *parent);
     bool addRecordData(const RecordItem* const recordItem);
     bool deleteRecord(quint64 millonSecs);
+    QObjectList searchRecordItems(const QString& key) const;
 
     bool updateTypeInfo(const QString &typeId, const QString &key,
                         const QString &value);

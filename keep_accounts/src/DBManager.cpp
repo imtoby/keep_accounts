@@ -291,6 +291,23 @@ bool DBManager::deleteRecord(quint64 millonSecs)
     return success;
 }
 
+QObjectList DBManager::searchRecordItems(const QString &key) const
+{
+    if (!keys.isEmpty()) {
+        QSqlDatabase db = database();
+        if(db.open()){
+            QSqlQuery query(db);
+
+            bool check = query.prepare("SELECT * FROM "
+                                       + KA::DATABASE_TABLE_NAME_RECORDS);
+            if (check) {
+                 while (query.next()) {
+                 }
+            }
+        }
+    }
+}
+
 bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
                                const QString &value)
 {
