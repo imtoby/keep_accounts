@@ -291,21 +291,56 @@ bool DBManager::deleteRecord(quint64 millonSecs)
     return success;
 }
 
-QObjectList DBManager::searchRecordItems(const QString &key) const
+QObjectList DBManager::searchRecordItems(const QString &keys,
+                                         QObject *parent) const
 {
     if (!keys.isEmpty()) {
         QSqlDatabase db = database();
         if(db.open()){
             QSqlQuery query(db);
 
-            bool check = query.prepare("SELECT * FROM "
-                                       + KA::DATABASE_TABLE_NAME_RECORDS);
-            if (check) {
-                 while (query.next()) {
-                 }
+            QString sqlString = "SELECT * FROM "
+                    + KA::DATABASE_TABLE_NAME_RECORDS
+                    + " WHERE "
+                    + KA::YEAR          + " LIKE '%" + keys + "%' OR "
+                    + KA::MONTH         + " LIKE '%" + keys + "%' OR "
+                    + KA::DAY           + " LIKE '%" + keys + "%' OR "
+                    + KA::PARENT_TYPE   + " LIKE '%" + keys + "%' OR "
+                    + KA::CHILD_TYPE    + " LIKE '%" + keys + "%' OR "
+                    + KA::AMOUNT        + " LIKE '%" + keys + "%' OR "
+                    + KA::NOTE          + " LIKE '%" + keys + "%'";
+
+            query.exec(sqlString);
+            QObjectList list;
+            while (query.next()) {
+                RecordItem* item = new RecordItem(parent);
+                item->setMillonSecs(    query.value(0).toULongLong());
+                item->setDateTime(      query.value(1).toString());
+                item->setYear(          query.value(2).toInt());
+                item->setMonth(         query.value(3).toInt());
+                item->setDay(           query.value(4).toInt());
+                item->setType(          query.value(5).toInt());
+                item->setParentType(    query.value(6).toString());
+                item->setChildType(     query.value(7).toString());
+                item->setAmount(        query.value(8).toDouble());
+                item->setNote(          query.value(9).toString());
+                item->setIcon(          query.value(10).toString());
+                list.push_back(item);
             }
+
+            if(query.lastError().isValid()){
+                qDebug() << __FUNCTION__ << query.lastError();
+            }
+            query.clear();
+            db.close();
+
+            qDebug() << __FUNCTION__
+                     << QStringLiteral("list.size: ") << list.size();
+
+            return list;
         }
     }
+    return QObjectList();
 }
 
 bool DBManager::updateTypeInfo(const QString &typeId, const QString &key,
