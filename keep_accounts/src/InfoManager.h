@@ -133,8 +133,6 @@ signals:
             , const QString& icon = QString());
     void updateRecordFinished();
 
-    void searchRecordItems(const QString& keys);
-
 private slots:
     void initTypeData();
     void initSelectTypeData();
